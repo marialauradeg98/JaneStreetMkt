@@ -7,7 +7,7 @@ import datatable as dt
 def import_dataset():
     """importing the Jane Market dataset as a pandas dataframe, quite slow"""
     start = time.time()
-    data = pd.read_csv("../../jane-street-market-prediction/train.csv", nrows=10000)  # load dataset
+    data = pd.read_csv("../../jane-street-market-prediction/train.csv")  # load dataset
     print("Train size: {}".format(data.shape))
     print('Execution time is: {} s'.format(time.time()-start))  # compute execution time
     # data.info()
