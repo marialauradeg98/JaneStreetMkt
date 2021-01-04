@@ -12,8 +12,6 @@ This is just a preliminary stage more in depth analysis will be carried later.
 
 import matplotlib.pyplot as plt
 from initial_import import import_dataset
-from initial_import import import_sampled_dataset
-from col_histogram import col_histogram
 import numpy as np
 import pandas as pd
 import time
@@ -133,7 +131,7 @@ if __name__ == '__main__':
 
     # print scatter plot correlated pairings
     print("Working on scatter plot most correlated features...\n")
-    fig0, axes = plt.subplots(2, 2, figsize=(4, 4))
+    fig0, axes = plt.subplots(2, 2, figsize=(3, 3))
     axes[0, 0].scatter(x=data.loc[:, 'feature_60'],
                        y=data.loc[:, 'feature_61'], c="blue", marker=".")
     axes[0, 1].scatter(x=data.loc[:, 'feature_62'],
@@ -151,7 +149,7 @@ if __name__ == '__main__':
     miss_values = data.shape[0]-data.count()
     # select features with most missing values and plot a barplot
     miss_values = miss_values[(miss_values > data.count()*.005)]
-    fig2 = miss_values.plot.bar(title='Features and missing values', fontsize=12, figsize=(15, 10))
+    fig2 = miss_values.plot.bar(title='Features and missing values', fontsize=12, figsize=(3, 2))
     plt.savefig('Figures/missing_values_and_features.png', dpi=300)
     plt.clf()
 
@@ -159,14 +157,14 @@ if __name__ == '__main__':
     print("Working on plot of features over time...\n")
     mean_matrix_anon = daily_avarage(data_anon)
     fig3 = mean_matrix_anon.plot(subplots=True, layout=(
-        68, 2), figsize=(9., 140.))
+        68, 2), figsize=(3., 30.))
     plt.savefig('Figures/anonimous_features_over_time.png', dpi=300, bbox_inches="tight")
     plt.clf()
 
     # plot the cumulative sum of main features over time to see if there are patterns
     mean_matrix_anon = daily_avarage(data_main)
     fig4 = mean_matrix_anon.plot(subplots=True, layout=(
-        4, 2), figsize=(9., 15.))
+        4, 2), figsize=(3., 5.))
     plt.savefig('Figures/main_features_over_time.png', dpi=300, bbox_inches="tight")
     plt.clf()
     print("Done :)\n")
@@ -174,7 +172,7 @@ if __name__ == '__main__':
     # plot histogram of actions and features_0 the only categorical data
     print("Working on histograms of features...\n")
     fig5 = data.loc[:, ["action"]].plot.hist(legend=True, fontsize=18, figsize=(
-        15, 10), bins=2, title="Histogram of actions")
+        3, 2), bins=2, title="Histogram of actions")
     plt.savefig('Figures/histogram_actions.png', dpi=300, bbox_inches="tight")
     fig6 = data.loc[:, ["feature_0"]].plot.hist(legend=True, fontsize=18, figsize=(
         15, 10), bins=2, title="Histogram of features_0")
@@ -182,7 +180,7 @@ if __name__ == '__main__':
     plt.clf()
 
     # plot histogram of anonimous features
-    figs, axs = plt.subplots(43, 3, figsize=(9, 100))
+    figs, axs = plt.subplots(43, 3, figsize=(3, 30))
     column_names = data_anon.columns.values.tolist()  # create a list with the name of all the columns
     for i in range(43):
         for j in range(3):
@@ -193,7 +191,7 @@ if __name__ == '__main__':
     plt.savefig('Figures/histogram_anon.png', dpi=300, bbox_inches="tight")
 
     # plot histograms main features
-    fig8, axs = plt.subplots(3, 3, figsize=(9, 9))
+    fig8, axs = plt.subplots(3, 3, figsize=(3, 3))
     column_names = data_main.columns.values.tolist()  # create a list with the name of all the columns
     for i in range(2):
         for j in range(2):
@@ -206,7 +204,7 @@ if __name__ == '__main__':
     # plot boxplot of main features
     print("Working on boxplot of features...\n")
     fig9 = data_main.drop(["weight", "action", "date"], axis=1).plot(
-        kind="box", grid=False, whis=(1, 99), meanline=True, vert=False, title="Boxplot main features", figsize=(5, 5))
+        kind="box", grid=False, whis=(1, 99), meanline=True, vert=False, title="Boxplot main features", figsize=(3, 3))
     plt.savefig("Figures/boxplot_main", dpi=300)
     print("Done:)\n")
 
