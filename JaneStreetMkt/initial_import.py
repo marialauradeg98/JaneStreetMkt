@@ -84,3 +84,28 @@ def import_sampled_dataset(skip: int, rows=None):
     sec = (time.time()-start) % 60
     print('Execution time is: {} min {:.2f} sec\n'.format(mins, sec))
     return new_data
+
+
+def main():
+    FLAG = False  # used to make sure to go back once an invalid string is entered
+    while FLAG is False:
+        # reads the input from keyboard to select what to do
+        value = input(
+            "Hello what dataset do you want to import? \n1)Entire dataset \
+            \n2)Sampled dataset\n3)Small dataset\n")
+        if (value) == "1":
+            print("Importing entire dataset...\n")
+            data = import_dataset()  # import competion dataset
+            FLAG = True
+        elif (value) == "2":
+            print("Importing sampled dataset...\n")
+            data = import_sampled_dataset(20)
+            FLAG = True
+        elif (value) == "3":
+            rows = input("How many rows do you want to import?\n")
+            print("Importing small dataset...\n")
+            data = import_dataset(int(rows))
+            FLAG = True
+        else:
+            print("Please enter valid key\n \n")
+    return(data)
