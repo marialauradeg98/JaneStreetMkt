@@ -147,23 +147,15 @@ if __name__ == '__main__':
                 plt.close("all")
 
         elif value == "3":
-            # compute the correlation matrix between two hopefully uncorrelated days
-            day1_data = data.loc[data["date"] == 1]
-            day10_data = data.loc[data["date"] == 10]
-            day1_and_10 = pd.concat([day1_data, day10_data])
 
-            # compute wich pairings has a correlation > 0.99, > 0.95 and save to csv
-            corr_matrix_99 = corr_filter(day1_and_10, 0.99)
-            corr_matrix_95 = corr_filter(day1_and_10, 0.95)
-            (corr_matrix_99.round(3)).to_csv("Matrices/corr_99.csv")
-            (corr_matrix_95.round(3)).to_csv("Matrices/corr_95.csv")
-
-            # print number of pairings with correlation > 0.99, > 0.95
-            features_99 = (corr_matrix_99.count()).sum()
-            features_95 = (corr_matrix_95.count()).sum()
-            print("The number of pairings with correlation > 0.99 is {}. \
-                    \nThe number of pairings with correlation > 0.95 is {}.\n" .format(
-                features_99, features_95))
+            # select and delete features with correlation > 0.9 or <-0.9
+            print("Working on computing highly correlated features\n")
+            corr_matrix_90 = corr_filter(data, 0.90)
+            features_90 = (corr_matrix_90.count()).sum()
+            print("The number of pairings with correlation > 0.90 is {}.\n" .format(features_90))
+            sorted_matrix = corr_matrix_90.sort_values(ascending=False)
+            print(sorted_matrix)
+            sorted_matrix.to_csv("Matrices/features_to_remove2.csv")
 
             # print scatter plot correlated pairings
             print("Working on scatter plot most correlated features...\n")
