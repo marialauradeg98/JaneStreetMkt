@@ -3,8 +3,11 @@ The main goal of this module is to make a first attempt at feature selection
 through a correlation analysis
 """
 import time
+import numpy as np
 from numpy import random
 import pandas as pd
+from initial_import import import_dataset, import_training_set
+from sklearn.preprocessing import KBinsDiscretizer
 
 
 def remove_features(data, list_duplicates):
@@ -151,6 +154,56 @@ def random_features(data, treshold, number=None):
     return purged_data, new_list
 
 
+def remove_redundat_feat(data, series, treshold):
+        """
+        This function select from each correlation pairing the one with less class correlation
+        in order to remove it.
+
+        Parameters
+        ----------
+        data: DataFrame
+            original dataframe from wich we want to remove features.
+        series: Series
+            series containig feature-class correlation
+        treshold: float
+            the correlation treshold we use to consider feature pairings.
+
+        Yields
+        ------
+        purged_data: Dataframe
+            a dataframe without the feature pairings containing the randomly selected features.
+        new_list: list of str
+            list containig features with low class correlation.
+        """
+    new_list = []  # this list will contain the names of features we want to remove
+    max_index = len(data)
+
+    # for each row of the dataset delete the most redundant if a correlation treshold is met
+
+    for index in range(max_index):
+        feat1 = data.iloc[index, 0]
+        feat2 = data.iloc[index, 1]
+        if data.iloc[index, 2] > treshold or data.iloc[index, 2] < -treshold:
+            # remove feature with least class correlation
+            if serie.loc[feat1] < serie.loc[feat2]:
+                new_list.append(data.iloc[index, 0])
+            else:
+                new_list.append(data.iloc[index, 1])
+
+    # a few aestetichally pleasing prints
+    num_feat = len(new_list)
+    print("There are {} features pairings with a correlation greater than {}.\n"
+          .format(num_feat, treshold))
+    print("Features we are going to remove:\n")
+    for item in new_list:
+        print(item)
+
+    # remove features from dataset
+    purged_data = remove_features(data, new_list)
+
+    return purged_data, new_list
+
+
 def main(treshold):
     """
     This is the main of the module.
@@ -170,6 +223,8 @@ def main(treshold):
     # load correlated features matrix
     correlated_features = pd.read_csv(
         "../JaneStreetMkt/Matrices/features_to_remove.csv", header=None)
+    action_corr = pd.read_csv("correlation_matrix.csv", index_col=0, header=0)
+    action_corr = action_corr["action"].abs()
 
     # remove main features from the ones we want to eliminate
     no_main_features = ["resp_4", "date"]
@@ -178,7 +233,7 @@ def main(treshold):
     # remove duplicates
     no_duplicates, feature_removed = remove_duplicates(correlated_features, treshold)
     # remove redundant features
-    final_matrix, random_feat = random_features(no_duplicates, treshold)
+    final_matrix, random_feat = remove_redundat_feat(no_duplicates, action_corr, treshold)
     # create list with the feature to eliminate
     for item in random_feat:
         feature_removed.append(item)
