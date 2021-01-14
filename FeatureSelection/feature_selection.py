@@ -155,26 +155,26 @@ def random_features(data, treshold, number=None):
 
 
 def remove_redundat_feat(data, series, treshold):
-        """
-        This function select from each correlation pairing the one with less class correlation
-        in order to remove it.
+    """
+    This function select from each correlation pairing the one with less class correlation
+    in order to remove it.
 
-        Parameters
-        ----------
-        data: DataFrame
-            original dataframe from wich we want to remove features.
-        series: Series
-            series containig feature-class correlation
-        treshold: float
-            the correlation treshold we use to consider feature pairings.
+    Parameters
+    ----------
+    data: DataFrame
+        original dataframe from wich we want to remove features.
+    series: Series
+        series containig feature-class correlation
+    treshold: float
+        the correlation treshold we use to consider feature pairings.
 
-        Yields
-        ------
-        purged_data: Dataframe
-            a dataframe without the feature pairings containing the randomly selected features.
-        new_list: list of str
-            list containig features with low class correlation.
-        """
+    Yields
+    ------
+    purged_data: Dataframe
+        a dataframe without the feature pairings containing the randomly selected features.
+    new_list: list of str
+        list containig features with low class correlation.
+    """
     new_list = []  # this list will contain the names of features we want to remove
     max_index = len(data)
 
@@ -185,7 +185,7 @@ def remove_redundat_feat(data, series, treshold):
         feat2 = data.iloc[index, 1]
         if data.iloc[index, 2] > treshold or data.iloc[index, 2] < -treshold:
             # remove feature with least class correlation
-            if serie.loc[feat1] < serie.loc[feat2]:
+            if series.loc[feat1] < series.loc[feat2]:
                 new_list.append(data.iloc[index, 0])
             else:
                 new_list.append(data.iloc[index, 1])
