@@ -1,19 +1,37 @@
-"Two functions used to import the competition dataset"
+"""
+In this module are implemented many function to import the competition dataset
+as a pandas dataframe.
+Most of those functions are only used in the visualization part of the code.
+"""
 import time
 import pandas as pd
 import datatable as dt
 import numpy as np
 
 
-def compute_action(d_frame: pd.DataFrame):
+def compute_action(d_frame):
     """
-    This functions add the action and the weighted resp to the dataset
-    Action is equal to 1 when resp is > 0 and 0 otherwise
-    Weighted resp is the product between resp and weights
+    This functions add the action and the weighted resp to the dataset.
+    Action is equal to 1 when resp is > 0 and 0 otherwise.
+    Weighted resp is the product between resp and weights.
+
+    Parameters
+    ----------
+    d_frame: DataFrame
+        the competition DataFrame
+
+    Yields
+    ------
+    d_frame: DataFrame
+        the competition datafreme with action and weighted_resp added
     """
-    d_frame["action"] = ((d_frame["resp"]) > 0) * 1  # action
+    # add action to the dataframe
+    d_frame["action"] = ((d_frame["resp"]) > 0) * 1
+    # add weighted_resp
     d_frame["weighted_resp"] = d_frame["resp"]*d_frame["weight"]
-    d_frame["date"] = d_frame["date"]+1  # we add 1 to each day so we don't start from day 0
+    # we add 1 to each day so we don't start from day 0
+    d_frame["date"] = d_frame["date"]+1
+    # nice prints
     values = d_frame["action"].value_counts()
     print("Values of action are so distributed:\n{}\n".format(values))
     return d_frame
@@ -21,10 +39,26 @@ def compute_action(d_frame: pd.DataFrame):
 
 def import_dataset(rows=None, filepath=None):
     """
-    This fuction imports the Jane Market dataset as a pandas dataframe
-    Inputs: rows(int) number of rows to import (default=None all roes will be imported)
+    This fuction imports the Jane Market dataset as a pandas dataframe.
+    Each value in the dataframe is imported as to float32 to reduce memory usage.
+    To import the datset the pandas function read_csv is used.
+    It gets the job done but it is a little bit slow.
+
+    Parameters
+    ----------
+    rows: int (default=None)
+        number of rows we want to import.
+    filepath: str (default=the filepath in my pc :) )
+        filepath where the file train.csv is located.
+
+
+    Yields
+    ------
+    new_data: DataFrame
+        the entire dataset ready to use
     """
     start = time.time()
+    print("Importing  dataset...\n")
     if filepath is None:
         if rows is None:
             data = pd.read_csv("../../jane-street-market-prediction/train.csv",
@@ -37,27 +71,47 @@ def import_dataset(rows=None, filepath=None):
             data = pd.read_csv(filepath, dtype=np.float32)
         else:
             data = pd.read_csv(filepath, nrows=rows, dtype=np.float32)
+
     print("Train size: {}".format(data.shape))  # print number of rows and columns
     new_data = compute_action(data)  # add action and weighted resp
     # compute execution time
     mins = (time.time()-start)//60
     sec = (time.time()-start) % 60
-    print('Execution time is: {} min {:.2f} sec\n'.format(mins, sec))
+    print('Time to import the dataset is : {} min {:.2f} sec\n'.format(mins, sec))
     return new_data
 
 
-def import_dataset_faster(filepath=None):
+def import_dataset_faster(rows=None, filepath=None):
     """
-    This fuction imports the Jane Market dataset Jane Street dataset using datatable
-    and then converts it into a pandas dataframe.
-    This way should be faster
+    This fuction imports the Jane Market dataset as a pandas dataframe.
+    To import the datset the datatable function fread is used.
+    Then the data is converted into a dataframe.
+    This approach is significantly faster.
+
+    Parameters
+    ----------
+    rows: int (default=None)
+        number of rows we want to import.
+    filepath: str (default=the filepath in my pc :) )
+        filepath where the file train.csv is located.
+
+    Yields
+    ------
+    new_data: DataFrame
+        the entire dataset ready to use
     """
     start = time.time()  # get starttime
+    print("Importing dataset...\n")
     if filepath is None:
-        data_dt = dt.fread("../../jane-street-market-prediction/train.csv",
-                           dtype=np.float32)  # load the dataset
+        if rows is None:
+            data_dt = dt.fread("../../jane-street-market-prediction/train.csv")
+        else:
+            data_dt = dt.fread("../../jane-street-market-prediction/train.csv", max_nrows=rows)
     else:
-        data_dt = dt.fread(filepath, dtype=np.float32)
+        if rows is None:
+            data_dt = dt.fread(filepath)
+        else:
+            data_dt = dt.fread(filepath, max_nrows=rows)
 
     data = data_dt.to_pandas()  # converting to pandas dataframe
     print("Train size: {}".format(data.shape))  # print number of rows and columns
@@ -65,7 +119,7 @@ def import_dataset_faster(filepath=None):
     # compute execution time
     mins = (time.time()-start)//60
     sec = (time.time()-start) % 60
-    print('Execution time is: {} min {:.2f} sec\n'.format(mins, sec))
+    print('Time to import the dataset is : {} min {:.2f} sec \n'.format(mins, sec))
     return new_data
 
 
@@ -78,56 +132,85 @@ def logic(index: int, num: int):
     return False
 
 
-def import_sampled_dataset(skip: int, rows=None, filepath=None):
+def import_sampled_dataset(skip, rows=None, filepath=None):
     """
     This function load a sampleed version of the original dataset.
     We sample a value every n*skip rows.
-    Inputs: rows(int) = number of rows to import (default=None all rows will be imported)
-            skip(int) =number of rows between each chosen sample
+    This function is used only in the visualization module since linear sampling
+    in noisy dataset is not advised.
+
+    Parameters
+    ----------
+    skip: int
+        sample a row for each multiple of skip.
+    rows: int (default=None all rows will be imported)
+        number of rows to import.
+    filepath: str (default=the filepath in my pc :) )
+        filepath where the file train.csv is located.
+
+    Yields
+    ------
+    new_data: DataFrame
+        sampled dataset
     """
     start = time.time()
+    print("Importing sampled dataset...\n")
     if filepath is None:
         if rows is None:
             data = pd.read_csv("../../jane-street-market-prediction/train.csv",
                                skiprows=lambda x: logic(x, skip), dtype=np.float32)
         else:
             data = pd.read_csv("../../jane-street-market-prediction/train.csv",
-                               skiprows=lambda x: logic(x, slice), nrows=rows, dtype=np.float32)
+                               skiprows=lambda x: logic(x, skip), nrows=rows, dtype=np.float32)
     else:
         if rows is None:
             data = pd.read_csv(filepath,
                                skiprows=lambda x: logic(x, skip), dtype=np.float32)
         else:
             data = pd.read_csv(filepath,
-                               skiprows=lambda x: logic(x, slice), nrows=rows, dtype=np.float32)
+                               skiprows=lambda x: logic(x, skip), nrows=rows, dtype=np.float32)
+
     print("Train size: {}".format(data.shape))  # print number of rows and columns
     new_data = compute_action(data)  # add action and weighted resp
     # compute execution time
     mins = (time.time()-start)//60
     sec = (time.time()-start) % 60
-    print('Execution time is: {} min {:.2f} sec\n'.format(mins, sec))
+    print('Time to import sampled dataset: {} min {:.2f} sec\n'.format(mins, sec))
     return new_data
 
 
-def import_training_set():
+def import_training_set(fast_pc=False, rows=None):
     """
-    This fuction imports the Jane Market dataset as a pandas dataframe
-    Inputs: rows(int) number of rows to import (default=None all roes will be imported)
+    This is the import function we will call the most in the rest of the code.
+    It imports the Jane Market dataset as a pandas dataframe and removes the
+    6 resps features from the dataset since the competition test set
+    will not have those features.
+
+    Parameters
+    ----------
+    fast_pc: bool (default=False)
+        False use read_csv to import data
+        True use fred to import data
+
+    Yields
+    ------
+    training_data: DataFrame
+        dataset without resps
     """
     # load the first 400 days of data the last days will be used as a test set
     # let the user decide which import to use
-    PCFLAG = False
-    while PCFLAG is False:
-        pc = input("Do you have a good computer?\ny/n\n")
-        if pc == "y":
+
+    if fast_pc is True:
+        if rows is None:
             data = import_dataset_faster()
-            PCFLAG = True
-        elif pc == "n":
-            data = import_dataset()
-            PCFLAG = True
         else:
-            print("Please enter valid key\n")
-    #data = data[data["date"] < 400]
+            data = import_dataset_faster(rows)
+    else:
+        if rows is None:
+            data = import_dataset()
+        else:
+            data = import_dataset(rows)
+
     # Delete the resps' values from training set
     training_data = data.drop(["resp", "resp_1", "resp_2", "resp_3",
                                "resp_4", "weighted_resp"], axis=1)
@@ -135,72 +218,50 @@ def import_training_set():
     return training_data
 
 
-def import_test_set():
-    """
-    This fuction imports the Jane Market dataset as a pandas dataframe
-    Inputs: rows(int) number of rows to import (default=None all roes will be imported)
-    """
-    # load the last days of data as test set there is a gap of 25 days between test
-    # and training
-    PCFLAG = False
-    while PCFLAG is False:
-        pc = input("Done :) \nDo you have a good computer?\ny/n\n")
-        if pc == "y":
-            data = import_dataset_faster()
-            PCFLAG = True
-        elif pc == "n":
-            data = import_dataset()
-            PCFLAG = True
-        else:
-            print("Please enter valid key\n")
-    data = data[data["date"] > 20]
-    # Delete the resps' values from training set
-    test_data = data.drop(["resp", "resp_1", "resp_2", "resp_3", "resp_4", "weighted_resp"], axis=1)
-    return test_data
-
-
-def read_csv(path):
-    # Read types first line of csv
-    dtypes = pd.read_csv('tmp.csv', nrows=1).iloc[0].to_dict()
-    # Read the rest of the lines with the types from above
-    return pd.read_csv('tmp.csv', dtype=dtypes, skiprows=[1])
-    data.to_csv("../../jane-street-market-prediction/train.csv",)
-
-
 def main():
-    FLAG = False  # used to make sure to go back once an invalid string is entered
-    while FLAG is False:
+    """
+    This function implements a interactive way to import the import the dataset.
+    It reads the keabord inputs of the user to decide wich function to use to
+    import the dataset.
+    Parameters
+    ----------
+    None
+
+    Yields
+    ------
+    data: DataFrame
+        competition dataset
+    """
+
+    flag = False  # used to make sure to go back once an invalid string is entered
+    while flag is False:
         # reads the input from keyboard to select what to do
         value = input(
             "Hello what dataset do you want to import? \n1)Entire dataset \
             \n2)Sampled dataset\n3)Small dataset\n4)Training set\n")
         if (value) == "1":
-            PCFLAG = False
-            while PCFLAG is False:
-                pc = input("Do you have a good computer?\ny/n\n")
-                if pc == "y":
+            pcflag = False
+            while pcflag is False:
+                fast_pc = input("Do you have a good computer?\ny/n\n")
+                if fast_pc == "y":
                     data = import_dataset_faster()
-                    PCFLAG = True
-                elif pc == "n":
+                    pcflag = True
+                elif fast_pc == "n":
                     data = import_dataset()
-                    PCFLAG = True
+                    pcflag = True
                 else:
                     print("Please enter valid key\n")
-            print("Importing entire dataset...\n")
-            FLAG = True
+            flag = True
         elif (value) == "2":
-            print("Importing sampled dataset...\n")
             data = import_sampled_dataset(20)
-            FLAG = True
+            flag = True
         elif (value) == "3":
             rows = input("How many rows do you want to import?\n")
-            print("Importing small dataset...\n")
             data = import_dataset(int(rows))
-            FLAG = True
+            flag = True
         elif (value) == "4":
-            print("Importing training set...\n")
             data = import_training_set()
-            FLAG = True
+            flag = True
         else:
             print("Please enter valid key\n \n")
     return data

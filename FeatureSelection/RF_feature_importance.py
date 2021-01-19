@@ -100,7 +100,7 @@ if __name__ == "__main__":
     Skip85Days = False
     No0Weight = False
 
-    data = import_training_set()  # import training set
+    data = import_training_set(rows=100000)  # import training set
 
     # skip first 85 days because of change JaneStreetMkt trading critieria
     if Skip85Days == True:
