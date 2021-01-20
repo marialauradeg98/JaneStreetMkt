@@ -1,9 +1,13 @@
+"""
+In this module we implemented a user window for the analysis of the competition
+database with some usefull functions to plot relevant features, compute the
+most important quantities (such as profit) and study the correlation between features.
+"""
 import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import initial_import
-
 
 def statistical_matrix(d_frame: pd.DataFrame):
     """
