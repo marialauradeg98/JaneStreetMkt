@@ -12,12 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.model_selection import RandomizedSearchCV
-import feature_selection
 from initial_import import import_training_set
-from PurgedGroupTimeSeriesSplit import PurgedGroupTimeSeriesSplit
-from sklearn.model_selection import TimeSeriesSplit
 from splitting import test_train
+import feature_selection
 
 
 def compute_feat_imp(model, columns_names):
@@ -54,7 +51,7 @@ def compute_feat_imp(model, columns_names):
     most_imp = imp_data.iloc[0:30, :]  # select 30 most important features
 
     # plot barplot of most important features
-    fig = most_imp.plot(
+    most_imp.plot(
         kind="bar",
         x="features",
         y="importance",
@@ -64,7 +61,7 @@ def compute_feat_imp(model, columns_names):
 
     tresh = 1 / imp_data.shape[0]  # compute treshold
     # plot an horizontal line that rapresents the treshold
-    fig1 = plt.axhline(y=tresh, linestyle="--")
+    plt.axhline(y=tresh, linestyle="--")
     plt.show()
 
     # if std deviation + importance is < treshold the feature is redundant
@@ -74,14 +71,14 @@ def compute_feat_imp(model, columns_names):
     imp_data = imp_data[imp_data["imp+std"] > tresh].drop(["imp+std"], axis=1)
 
     # plot redundant features to make sure no errors were made
-    fig3 = redundant_feat.plot(
+    redundant_feat.plot(
         kind="bar",
         x="features",
         y="importance",
         yerr="standard_dev"
     )
 
-    fig4 = plt.axhline(y=tresh, linestyle="--")  # plot treshold as horizontal line
+    plt.axhline(y=tresh, linestyle="--")  # plot treshold as horizontal line
     plt.show()
 
     # save redunant features as numpy array
@@ -95,38 +92,36 @@ def compute_feat_imp(model, columns_names):
 
 
 if __name__ == "__main__":
-    Correlation = False
-    RandomSearch = False
-    Skip85Days = False
-    No0Weight = False
+    CORRELATION = True
+    SKIP_85_DAYS = True
 
-    data = import_training_set(rows=100000)  # import training set
+    data = import_training_set()  # import training set
 
     # skip first 85 days because of change JaneStreetMkt trading critieria
-    if Skip85Days == True:
+    if SKIP_85_DAYS is True:
         data = data[data["date"] > 85]
         data["date"] = data["date"]-85
 
-    # skip 0 weight transaction
-    if No0Weight == True:
-        data = data[data["weight"] != 0]
-
     # Remove feature based on correlation
-    if Correlation == True:
-        useless = feature_selection.main(0.90)
+    if CORRELATION is True:
+        useless = feature_selection.main(0.93)
         data = data.drop(useless, axis=1)
 
     # divide test and training set
     X_train, y_train, X_test, y_test = test_train(data)
+    print(X_train.shape)
 
-    params = {'n_estimators': 10,
+    params = {'n_estimators': 250,
               'max_features': "auto",
               'max_depth': 50,
               'bootstrap': True,
+              'min_samples_leaf': 5,
+              "max_samples": 0.20,
               'verbose': 2,
-              'n_jobs': -1}
+              'n_jobs': -1,
+              'random_state': 18}
 
-    # build RF with best params
+    # build RF model
     start = time.time()
     forest = ExtraTreesClassifier(**params)
     forest.fit(X_train, y_train)
@@ -139,14 +134,30 @@ if __name__ == "__main__":
         score_training, score_test))
 
     # create an array with the features' names
-    columns_names = np.zeros(X_train.shape[1])
-    columns_names = X_train.columns
+    columns_data = np.zeros(X_train.shape[1])
+    columns_data = X_train.columns
 
     # delete redundant features from train and test set
-    redunant_feat = compute_feat_imp(forest, columns_names)
+    redunant_feat = compute_feat_imp(forest, columns_data)
     X_train = X_train.drop(redunant_feat, axis=1)
     X_test = X_test.drop(redunant_feat, axis=1)
 
     # save deleted features
     np.savetxt("Results/deleted_feat_skip85.csv",
                redunant_feat, fmt="%s", delimiter=',')
+
+    # create a dataframe that sumarizes the results
+    results = {"score test ": score_test,
+               "score training": score_training,
+               "computational time (min)": finish,
+               "num_deleted_features": len(redunant_feat),
+               "Correlation": CORRELATION,
+               "Skip 85 Days": SKIP_85_DAYS}
+    end_results = pd.DataFrame(results, index=["values"])
+
+    # nice print
+    print("a little recap of the results:")
+    print(end_results)
+
+    # save results and removed features as csv
+    end_results.to_csv("Results/results_del_feat.csv"))

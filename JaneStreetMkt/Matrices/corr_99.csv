@@ -1,9 +1,6 @@
-feature_89,feature_113,0.993
-feature_95,feature_119,0.993
-feature_107,feature_119,0.994
-date,ts_id,0.995
-feature_65,feature_66,0.997
-feature_62,feature_63,0.998
-feature_60,feature_61,0.999
+feature_65,feature_66,0.995
+feature_60,feature_61,0.996
+feature_62,feature_63,0.996
+date,ts_id,0.998
 feature_67,feature_68,0.999
 date,date,
