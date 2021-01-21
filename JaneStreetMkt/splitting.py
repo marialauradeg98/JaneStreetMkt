@@ -1,11 +1,11 @@
 import numpy as np
 
 
-def split(data, no_fill=False,val=False):
+def split_data(data, no_fill=False, val=False):
     """
     This function splits the dataset in test set and training set or in test set,
     training set and validation set.
-    In each case we leave a gap between training set anda test set to prevent
+    In each case we leave a gap between training set and test set to prevent
     information leakage.
     Parameters
     ----------
@@ -36,9 +36,9 @@ def split(data, no_fill=False,val=False):
     if no_fill is False:
         # fill missing values with outliers
         data = data.fillna(-999)
-    #find the number of trading day
+    # find the number of trading day
     num_days = data["date"].iloc[-1]
-    #Compute the gap between the training and test set
+    # Compute the gap between the training and test set
     gap = num_days*5//100
 
     if val is False:
@@ -50,7 +50,7 @@ def split(data, no_fill=False,val=False):
         data_test = data[data["date"] >= days_test]
         data_train = data[data["date"] <= days_train]
     else:
-        #split training,test and validation set with our choosen percentage
+        # split training,test and validation set with our choosen percentage
         days_train = num_days*65//100
         days_val = (days_train + gap, days_train + gap+num_days//10)
         days_test = days_val[1]+gap
@@ -81,4 +81,4 @@ def split(data, no_fill=False,val=False):
     if val is False:
         return X_train, y_train, X_test, y_test
     else:
-        return X_train, y_train,X_test, y_test, X_val, y_val
+        return X_train, y_train, X_test, y_test, X_val, y_val
