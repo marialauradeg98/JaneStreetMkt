@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import initial_import
 
+
 def statistical_matrix(d_frame: pd.DataFrame):
     """
     This function returns a Pandas dataframe containing useful statistical informations
@@ -60,7 +61,7 @@ def compute_profit(d_frame: pd.DataFrame):
     val_u:
         Value of the maximum possible utility
     """
-    #find the last day of trading
+    # find the last day of trading
     days = int(d_frame.loc[:, "date"].iat[-1])
     # compute a Pandas series p_i from the original dataset
     p_i = d_frame.loc[:, ["weighted_resp", "date", "action"]]
@@ -70,8 +71,9 @@ def compute_profit(d_frame: pd.DataFrame):
     # compute t and u
     val_t = p_i.sum()/np.sqrt((p_i**2).sum())*np.sqrt(250/days)
     val_u = min(max(val_t, 0), 6)*p_i.sum()
-    print("If we take an action every time we have resp > 0 .\n The expected utility is {: .3f} after {} days of traiding .\n".format(val_u,days))
-    return (val_u,days)
+    print("If we take an action every time we have resp > 0 .\n The expected utility is {: .3f} after {} days of traiding .\n".format(
+        val_u, days))
+    return (val_u, days)
 
 
 def corr_filter(d_frame: pd.DataFrame, bound: float):
@@ -88,15 +90,18 @@ def corr_filter(d_frame: pd.DataFrame, bound: float):
     ------
     data_flattened: Pandas series
         The series which contains feature pairings with a correlation >bound or <-bound.
+    data_corr: Pandas DataFrame
+        Correlation matrix.
     """
-    #compute our correlations
+    # compute our correlations
     data_corr = d_frame.corr()
-    #selct the correlation in the choosen range
+    # selct the correlation in the choosen range
     data_filtered = data_corr[((data_corr >= bound) | (
         data_corr <= -bound)) & (data_corr != 1.000)]
     # discard the other values
     data_flattened = data_filtered.unstack().sort_values().drop_duplicates()
-    return data_flattened
+    return data_flattened, data_corr
+
 
 def activity_choice():
     """
@@ -137,6 +142,7 @@ def plot_main_features(data):
     plt.legend()
     save_oneplot_options("Figures/cumsum_resps.png")
 
+
 def correlation_analysis(data):
     """
     This function is used to evaluate the correlation between the features and to
@@ -149,14 +155,14 @@ def correlation_analysis(data):
     """
     # select highly correlated features (correlation> 0.9 or <-0.9)
     corr_matrix_90 = corr_filter(data, 0.90)
-    #couting the number of higly correlated features
+    # couting the number of higly correlated features
     features_90 = (corr_matrix_90.count()).sum()
     print("The number of pairings with correlation > 0.90 is {}.\n" .format(features_90))
-    #sort the correlation matrix obtained before
+    # sort the correlation matrix obtained before
     sorted_matrix = corr_matrix_90.sort_values(ascending=False)
     print(sorted_matrix)
     sorted_matrix.to_csv("Matrices/features_to_remove2.csv")
-    #scatter plot most correlated features pairings
+    # scatter plot most correlated features pairings
     print("Working on scatter plot most correlated features...\n")
     fig0, axes = plt.subplots(2, 2, figsize=(6, 6))
     fig0.suptitle("Scatter plot higly correlated features", fontsize=20)
@@ -178,6 +184,7 @@ def correlation_analysis(data):
     axes[1, 1].set_xlabel('Feature 67')
     axes[1, 1].set_ylabel('Feature 68')
     save_oneplot_options("Figures/scatter_correlation.png")
+
 
 def plot_anon_features(data):
     """
@@ -205,7 +212,7 @@ def plot_anon_features(data):
     save_plots_options(names)
 
 
-def missing_data_analysis(data,threshold):
+def missing_data_analysis(data, threshold):
     """
     This function is used to identify features with a number of missing values
     over a threshold and build the relative bar plots.
@@ -221,11 +228,12 @@ def missing_data_analysis(data,threshold):
     miss_values = data.shape[0]-data.count()
     # select features with missing values over a choosen threshold
     miss_values = miss_values[(miss_values > data.count()*threshold)]
-    #plot the relative bar plot
+    # plot the relative bar plot
     fig2 = miss_values.plot(kind="bar", fontsize=10, figsize=(10, 6))
     plt.title("Features with most missing values", fontsize=20)
     plt.subplots_adjust(bottom=0.2)
     save_oneplot_options("Figures/missing_data.png")
+
 
 def hist_main_features(data):
     """
@@ -267,6 +275,7 @@ def hist_main_features(data):
     plt.suptitle("Histogram main features", fontsize=20)
     save_oneplot_options("Figures/histogram_main.png")
 
+
 def hist_anon_features(data):
     """
     This function is used to plot histograms about anonymous features distributions.
@@ -297,6 +306,7 @@ def hist_anon_features(data):
         names.append('Figures/histogram_anonimous_features{}.png'.format(i))
     save_plots_options(names)
 
+
 def boxplot_main(data):
     """
     This function is used to build the boxplot of main features. The user
@@ -306,11 +316,11 @@ def boxplot_main(data):
     data: Pandas dataframe
         The dataset we are working on.
     """
-    #matrix containing only the most relevant features
+    # matrix containing only the most relevant features
     data_main = data.loc[:, ["resp", "resp_1", "resp_2",
                              "resp_3", "resp_4", "weight", "weighted_resp", "action", "date"]]
     print("Working on boxplot of features...\n")
-    #Plot th boxplot (outliers aren't shown)
+    # Plot th boxplot (outliers aren't shown)
     fig9 = data_main.drop(["weight", "action", "date"], axis=1).plot(
         kind="box", grid=False, whis=(10, 90), meanline=True, vert=False,
         figsize=(7, 6), sym="", label="wiskers rapresent I$_{10}$ and I$_{90}$")
@@ -319,7 +329,8 @@ def boxplot_main(data):
     plt.legend()
     save_oneplot_options("Figures/boxplot_main.png")
 
-def save_data_options(object,name_save):
+
+def save_data_options(object, name_save):
     """
     This fuction is used for the save options of a dataframe as .cvs.
     Parameters
@@ -366,6 +377,7 @@ def save_oneplot_options(name_save):
         plt.show()
         plt.close("all")
 
+
 def save_plots_options(names_save):
     """
     This fuction is used for the save options and visualization of some plots.
@@ -397,14 +409,14 @@ if __name__ == '__main__':
     data = initial_import.main()
     # compute the maximum value of u possible
     u_val, days = compute_profit(data)
-    #user window
+    # user window
     FLAG = False  # used to make sure to go back once an invalid string is entered
     while FLAG is False:
         value = activity_choice()
         if value == "1":
             # compute matrix containig useful statistical informations
             stats = statistical_matrix(data)
-            save_data_options(stats,"Matrices/stats_complete.csv")
+            save_data_options(stats, "Matrices/stats_complete.csv")
         elif value == "2":
             plot_main_features(data)
         elif value == "3":
@@ -412,7 +424,7 @@ if __name__ == '__main__':
         elif value == "4":
             plot_anon_features(data)
         elif value == "5":
-            missing_data_analysis(data,.005)
+            missing_data_analysis(data, .005)
         elif value == "6":
             hist_main_features(data)
         elif value == "7":
