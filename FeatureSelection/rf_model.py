@@ -8,7 +8,7 @@ from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import TimeSeriesSplit
 from initial_import import import_training_set
-from splitting import test_train_val, test_train
+from splitting import split_data
 import feature_selection
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 
@@ -27,19 +27,21 @@ def acc_model(params):
 
 def func(params):
     """ v """
+    begin = time.time()
     acc = acc_model(params)
     print(params, acc)
-    return {'loss': -acc, 'status': STATUS_OK}
+    end = (time.time() - begin) / 60
+    return {'loss': -acc, 'status': STATUS_OK, 'train_time': end}
 
 
 if __name__ == "__main__":
     CORRELATION = True
-    NEW_START = True
+    NEW_START = False
     SKIP_85_DAYS = True
     NO_0_WEIGHT = False
     RF_IMPORTANCE = True
-    HYPERPARAMETER_SEARCH = True
-    ITERATION = 1
+    HYPERPARAMETER_SEARCH = False
+    ITERATION = 100
 
     data = import_training_set()  # import training set
 
@@ -64,7 +66,7 @@ if __name__ == "__main__":
 
     if HYPERPARAMETER_SEARCH is True:
         # divide dataset into test training and validation set
-        X_train, y_train, X_val, y_val, X_test, y_test = test_train_val(data)
+        X_train, y_train, X_test, y_test, X_val, y_val = split_data(data, val=True)
 
         # define search_space
         search_space = {
@@ -94,6 +96,7 @@ if __name__ == "__main__":
             print("Time to search hyperparameters {:.2f} min".format(finish))
 
             # The trials database now contains 10 entries, it can be saved/reloaded with pickle
+
             pickle.dump(trials, open("Hyperopt/myfile.p", "wb"))
             # write on a txt file number of trials done
             search_file = open("Hyperopt/searches.txt", "w")
@@ -122,7 +125,7 @@ if __name__ == "__main__":
             pickle.dump(trials, open("Hyperopt/myfile.p", "wb"))
 
             # save new number of total evaluations
-            search_file = open("Hyperopt/search.txt", "w")
+            search_file = open("Hyperopt/searches.txt", "w")
             search_file.write("{}".format(SEARCHES))
             search_file.close()
 
@@ -133,26 +136,38 @@ if __name__ == "__main__":
 
     else:
         # divide test and training set
-        X, y, X_test, y_test = test_train(data)
+        X, y, X_test, y_test = split_data(data)
 
         # define parameters of cross validation
         N_FOLDS = 5
         folds = TimeSeriesSplit(n_splits=N_FOLDS,
-                                max_train_size=int(5000),
-                                test_size=int(1000),
-                                gap=int(2000))
+                                max_train_size=int(1e6),
+                                test_size=int(2e5),
+                                gap=int(2e5))
 
         # best hyperparameters for the model
-        parameters = {'n_estimators': 250,
+
+        parameters = {'n_estimators': 433,
                       'max_features': "auto",
-                      'max_depth': 50,
+                      'max_depth': 60,
                       'bootstrap': True,
-                      'min_samples_leaf': 5,
-                      "max_samples": 0.20,
+                      'min_samples_leaf': 7,
+                      "max_samples": 0.66,  # 0.265
                       'verbose': 1,
                       'n_jobs': -1,
                       'random_state': 18}
-
+        '''
+        parameters = {'criterion': "gini",
+                      'n_estimators': 285,
+                      'max_features': "auto",
+                      'max_depth': 41,
+                      'bootstrap': True,
+                      'min_samples_leaf': 10,
+                      "max_samples": 0.1945,
+                      'verbose': 1,
+                      'n_jobs': -1,
+                      'random_state': 18}
+        '''
         # create model
         splits = folds.split(X, y)
         forest = ExtraTreesClassifier(**parameters)
@@ -201,4 +216,4 @@ if __name__ == "__main__":
         print(end_results)
 
         # save results and removed features as csv
-        end_results.to_csv("Results/results{}.csv".format(ITERATION))
+        end_results.to_csv("Results/results_cv_subsample{}.csv".format(ITERATION))

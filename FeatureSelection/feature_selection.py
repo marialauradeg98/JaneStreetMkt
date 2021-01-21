@@ -17,14 +17,12 @@ def remove_features(data, list_duplicates):
     """
     This function removes rows from the higly correlated DataFrame
     containing the names in list duplicates
-
     Parameters
     ----------
     data: DataFrame
         original dataframe from which we want to remove features.
     list_duplicates: list of str
         a list of strings containig the names of the features we want to remove.
-
     Yields
     ------
     new_data: Dataframe
@@ -55,21 +53,18 @@ def remove_duplicates(data, treshold):
     """
     This function finds features highly correlated with multiple features.
     They will be the first features we are going to remove.
-
     Parameters
     ----------
     data: DataFrame
         original dataframe from wich we want to remove features.
     treshold: float
         the correlation treshold we use to consider feature pairings.
-
     Yields
     ------
     purged_data: Dataframe
         a dataframe without the features in list duplicates
     new_list: list of str
         list containig the features with multiple correlation pairings.
-
     """
     # transform the pandas dataframe to a list containing the names of the features
     old_list = []
@@ -112,7 +107,6 @@ def remove_redundat_feat(data, series, treshold):
     """
     This function select from each correlation pairing the one with less class correlation
     in order to remove it.
-
     Parameters
     ----------
     data: DataFrame
@@ -121,7 +115,6 @@ def remove_redundat_feat(data, series, treshold):
         series containig feature-class correlation
     treshold: float
         the correlation treshold we use to consider feature pairings.
-
     Yields
     ------
     purged_data: Dataframe
@@ -162,12 +155,10 @@ def compute_correlation(filepath=None):
     """
     This function computes and saves the correlation matrix of the test set
     and the matrix with feature pairings with correlation greater than 0.9
-
     Parameters
     ----------
     filepath: str (default=None)
         filepath where the two matrices wll be saved
-
     Yields
     ------
     2 csv files containing the two matrices
@@ -200,12 +191,10 @@ def main(treshold):
     """
     This is the main of the module.
     It combines all the previously defined functions to do a feature selections.
-
     Parameters
     ----------
     treshold: float
         the correlation treshold we use to consider feature pairings.
-
     Yields
     ------
     new_list: list of str

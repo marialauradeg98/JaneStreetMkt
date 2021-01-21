@@ -1,11 +1,11 @@
 """
 This feature selection model is based on a tecnique explained in the book Advances
 in financial ML by
-The idea behind the tecnique is to use a RF classifier to compute the MSI feature importance
-of each feature. MSI has the property that it sum is 1 and if each feature is equally
+The idea behind the tecnique is to use a RF classifier to compute the MDI feature importance
+of each feature. MDI is normalize to 1 and if each feature is equally
 important each of them should have an MSI score of 1/n (n=number of features).
-This means we can remove the features which (MSI score + standard deviation) is minor
-than 1/n
+This means we can remove the features with a (MDI score + standard deviation) minor
+than 1/n.
 """
 import time
 import numpy as np
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.ensemble import ExtraTreesClassifier
 from initial_import import import_training_set
-from splitting import test_train
+from splitting import split_data
 import feature_selection
 
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         data = data.drop(useless, axis=1)
 
     # divide test and training set
-    X_train, y_train, X_test, y_test = test_train(data)
+    X_train, y_train, X_test, y_test = split_data(data)
     print(X_train.shape)
 
     params = {'n_estimators': 250,
@@ -160,4 +160,4 @@ if __name__ == "__main__":
     print(end_results)
 
     # save results and removed features as csv
-    end_results.to_csv("Results/results_del_feat.csv"))
+    end_results.to_csv("Results/results_del_feat.csv")
