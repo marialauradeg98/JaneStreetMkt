@@ -10,6 +10,7 @@ The best learning rate for our model is lr/10
 """
 
 import time
+import math
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -101,9 +102,12 @@ if __name__ == '__main__':
 
     # create two empty arrays that will contain the learning rate and the loss values
     # for each iteration
-    array_learn = np.zeros(100)
-    value_loss = np.zeros(100)
+    array_learn = []
+    value_loss = []
 
+    log_lr = []
+    avg_loss = 0
+    beta= 0.98 #smoothing parameter
     # starting learning rate
     learn_rate = 1e-8
 
@@ -128,10 +132,17 @@ if __name__ == '__main__':
 
         print(history.history.keys())
 
-        # save values of loss and learning rate
-        value_loss[i] = (history.history['val_loss'][0])
-        array_learn[i] = learn_rate
+        #compute the average loss for each step
+        avg_loss = beta*avg_loss[i]+(1-beta)*value_loss[0]
+        smoothed_loss=avg_loss/(1-beta**(i+1))
+        if i>1 and smoothed_loss[i]>(4*best_loss):
+            return log_lr,value_losses
+        if smoothed_loss<4*best_loss or i==1:
+            best_loss=smoothed_loss
 
+        #store losses and learning rates
+        value_loss.append((history.history['val_loss'][0]))
+        array_learn.append(math.log10(learn_rate))
         # set learning rate for next cycle
         learn_rate = learn_rate*1.22
 
