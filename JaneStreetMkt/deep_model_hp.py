@@ -1,3 +1,8 @@
+"""
+This module is used for the hyperparameters optimization in our deep neural network
+We implemented our search using Keras Tuner, in particular the so called Random Search
+for finding hyperparameters which maximize the AUC.
+"""
 import time
 import pandas as pd
 import numpy as np
@@ -17,29 +22,33 @@ from splitting import split
 
 def build_model(hp):
     """
-
+    This function in used for build the neural network model specifing the hyperparameters
+    we want to optimize and their searching rate.
     """
     model=Sequential()
     model.add(BatchNormalization()) #re-centring and rescaling input layer
-    model.add(Dropout(rate = hp.Float('dropout0'+str(0), min_value=0.0,max_value=0.5))) #a fraction of nodes is discarded with a frequency equal to the rate
+    model.add(Dropout(rate = hp.Float('dropout0'+str(0), min_value=0.3,max_value=0.5))) #a fraction of nodes is discarded with a frequency equal to the rate
     for i in range(hp.Int('num_layers',2,5)):
-        model.add(Dense(units=hp.Int('hidden_units'+str(i), min_value=40, max_value=2000, step=50), activation='relu'))
+        model.add(Dense(units=hp.Int('hidden_units'+str(i), min_value=0, max_value=500, step=50), activation='relu'))
         model.add(BatchNormalization())
         model.add(Activation('relu'))
         model.add(Dropout(rate=hp.Float('dropout_rates'+ str(i),min_value=0.0, max_value=0.5)))
     model.add(Dense(1, activation= 'sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer=Adam(hp.Float('learning_rate',min_value=0.0001, max_value=0.01,sampling='LOG')), metrics=['AUC'] )
+    model.compile(loss='binary_crossentropy', optimizer=Adam(learning_rate=0.00810), metrics=['AUC'] )
     return model
 
 
 
-def main(data):
+if __name__ == '__main__':
     start = time.time()
+    #importing the dataset
+    data = pd.read_csv("reduced_dataset.csv", index_col=0, dtype="float32")
     #splitting dataset in training,test and validation set
-    X_tr, y_tr, X_test, y_test,X_val,y_val=split(data,val=True)
+    X_tr, y_tr, X_test, y_test,X_val,y_val=split_data(data,val=True)
+    #set the Random search
     tuner = RandomSearch(
         build_model,
-        seed=1,
+        seed=5,
         objective='val_AUC',
         max_trials=50,
         executions_per_trial=1,
@@ -49,7 +58,7 @@ def main(data):
     #reduce learning rate when accuracy stops to increase
     reduce_lr=ReduceLROnPlateau(monitor='val_AUC',factor=0.2, patience=5,mode='max')
     #stop training when the accuracy stops to increase
-    es=EarlyStopping(monitor='val_AUC', patience=10,mode='max')
+    es=EarlyStopping(monitor='val_AUC', patience=10,mode='max',min_delta=0.01)
     #start the search for our hyperparameters
     tuner.search(X_tr,y_tr,epochs=20000,callbacks=[es,reduce_lr], batch_size=4096,validation_data=(X_val,y_val))
     #print the best results
