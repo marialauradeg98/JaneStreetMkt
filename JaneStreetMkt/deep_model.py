@@ -1,76 +1,77 @@
 import time
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import cross_val_score, TimeSeriesSplit, train_test_split
 import matplotlib.pyplot as plt
-from keras.layers import Input,Dense,Dropout,Activation,BatchNormalization
+from keras.utils import np_utils
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.layers import Input, Dense, Dropout, Activation, BatchNormalization
 from keras.models import Model
-from keras.callbacks import ReduceLROnPLatea, EarlyStopping
-from keras.optimizers import Adam
+import keras.losses
 from initial_import import import_training_set
-from splitting import split
+from splitting import split_data
+import feature_selection
+import gc
 
 
-
-def build (input_dim,dropout0,num_layers,hidden_units,dropout_rates,learning_r):
+def build(input_dim, hidden_units, num_labels, dropout_rates, learning_rate):
     """
     This function builts the deep neural network used for the training.
     """
-    input = Input(shape = (input_dim, ))
-    x = BatchNormalization()(input) #re-centring and rescaling input layer
-    x = Dropout(dropout_rates[0])(x) #a fraction of nodes is discarded with a frequency equal to the rate
-    for i in range(num_layers)):
-        x = Dense(hidden_units[i], actvation='relu')(x)
+    input = Input(shape=(input_dim, ))
+    x = BatchNormalization()(input)  # re-centring and rescaling input layer
+    # a fraction of nodes is discarded with a frequency equal to the rate
+    x = Dropout(dropout_rates[0])(x)
+    for i in range(len(hidden_units)):
+        x = Dense(hidden_units[i])(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
         x = Dropout(dropout_rates[i+1])(x)
-    output = Dense(1, activation= 'sigmoid')(x)
-    model = Model(inputs = input, outputs = output)
-    model.compile(loss='binary_crossentropy', optimizer=Adam(learning_rate=learning_r), metrics=['AUC'] )
+
+    output = Dense(num_labels, activation='sigmoid')(x)
+    model = Model(inputs=input, outputs=output)
+    model.compile(loss=keras.losses.binary_crossentropy,
+                  optimizer=keras.optimizers.Adam(learning_rate), metrics=['accuracy'])
+    model.summary()
+
     return model
 
-def skip_days(data,days):
-    data = data[data["date"] > 85]
-    data["date"] = data["date"]-85
-    return data
-
-def skip_value(data,value):
-    data = data[data["weight"] != value]
 
 if __name__ == '__main__':
-    start = time.time()
-    #importing training set
     data = import_training_set()
-    print('Training set imported successfully.')
-    #user window
-    #After the first 85 days Jane Street changed its trading criteria
-    value1=input('Do you want to skip the first 85 trading days? y/n\n')
-    if value1=="y":
-        data =skip_days(data,85)
-    if value1 != "n":
-        print('Please,enter valid key.\n')
-    #decide to consider or not transaction with 0 weight
-    value2=input('Do you want to skip transaction with weight 0? y/n\n')
-    if value2=="y":
-        skip_value(data,0)
-    if value2 !="n":
-        print('Please,enter valid key.\n')
+    #data = data[data["date"] > 85]
+    #data["date"] = data["date"]-85
 
+    # Remove feature based on correlation
 
-    #splitting dataset in training and test set
-    X_tr y_tr, X_test, y_test=split_data(data)
-    #set parameters for the model
-    input_dim=X_tr.shape[1]
-    dropout0=0.10143786981358652
-    num_layers=5
-    hidden_units = [384, 896, 896, 394]
-    dropout_rates = [0.19720339053599725, 0.2703017847244654, 0.23148340929571917, 0.2357768967777311]
-    learning_r=1e-3
-    #cross validation
-    folds = TimeSeriesSplit(n_splits = 5, gap=int(2000),max_train_size=int(5000),test_size=int(1000))
+    useless = feature_selection.main(0.93)
+    data = data.drop(useless, axis=1)
+
+    # remove features based on MSI feature importance
+    redunant_feat = np.loadtxt("../FeatureSelection/Results/deleted_feat_skip85.csv", dtype="str")
+    data = data.drop(redunant_feat, axis=1)
+
+    # splitting dataset in training and test set
+    X, y, X_test, y_test = split_data(data)
+    # set parameters for the model
+    dropout0 = 0.1808
+    num_layers = 2
+    hidden_units = [320, 512]
+    dropout_rates = [0.1808, 0.1296, 0.2920]
+    learning_r = 0.0081
+
+    # define parameters of cross validation
+    N_FOLDS = 5
+    folds = TimeSeriesSplit(n_splits=N_FOLDS,
+                            max_train_size=int(1e6),
+                            test_size=int(2e5),
+                            gap=int(2e5))
+
     splits = folds.split(X, y)
     score_cv = []  # empty list will contain accuracy score of each split
+    start = time.time()
     for fold_n, (train_index, val_index) in enumerate(splits):
         print('Fold: {}'.format(fold_n+1))
         # for each iteration we define the boundaries of training and validation set
@@ -78,35 +79,33 @@ if __name__ == '__main__':
         X_val = X.iloc[val_index[0]:val_index[-1], :]
         y_train = y[train_index[0]:train_index[-1]]
         y_val = y[val_index[0]:val_index[-1]]
-        #build the deep neural network
+        dimension = X_train.shape[1]
+        # build the deep neural network
         print('Building model...')
-        model=build(input_dim,dropout0,num_layers,hidden_units,dropout_rates,learining_r)
-        #define usefull callbacks
-        #reduce learning rate when accuracy stops to increase
-        reduce_lr=ReduceLROnPlateau(monitor='val_auc',factor=0.2, patience=5,mode='max')
-        #stop training when the accuracy stops to increase
-        es=EarlyStopping(monitor='val_auc', patience=6,mode='max',min_delta=0.001)
-        #training step for out neural network: fit and score
+        model = build(dimension, hidden_units, 1, dropout_rates, learning_r)
+        # define usefull callbacks
+        # reduce learning rate when accuracy stops to increase
+        reduce_lr = ReduceLROnPlateau(monitor='val_accuracy', factor=0.2, patience=4, mode='max')
+        # stop training when the accuracy stops to increase
+        es = EarlyStopping(monitor='val_accuracy', patience=7, mode='max', min_delta=3e-4)
+        # training step for out neural network: fit and score
         print('Training model...')
-        model.fit(X_tr,y_tr, validation_data=(X_val,y_val), epochs=10,batch_size=4096, verbose=1, callbacks=[es,reduce_lr])
-        score = model.score(X_val, y_val)
-        score_cv.append(score)
+        model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=1000,
+                  batch_size=4096, verbose=1, callbacks=[es, reduce_lr])
+
         # delete train and validation set to save memory
-        del X_tr, X_val, y_tr, y_val
+        del X_train, X_val, y_train, y_val
         gc.collect()
 
+    finish = (time.time()-start)/60
     print("The accuracy score of each iteration is:")
-    print(score_cv)
-    #evaluate the model on test set
-    print('Evaluating model...')
-    predictions = model.predict(X_test,verbose=1)
-    acc=accuracy_score(y_test, predictions)
-    print('The score on test is:\n')
-    print(acc)
-    model.summary()
 
-    # compute execution time
-    mins = (time.time()-start)//60
-    sec = (time.time()-start) % 60
-    print('Time to execute the feature selection model is time is: {} min {:.2f} sec\n'
-          .format(mins, sec))
+    # evaluate the model on test set
+    print('Evaluating model...')
+    history = model.fit(X, y, validation_data=(X_test, y_test), epochs=1000,
+                        batch_size=4096, verbose=1, callbacks=[es, reduce_lr])
+
+    acc_train = history.history["val_accuracy"]
+    acc_test = history.history["accuracy"]
+
+    print(max(acc_test), max(acc_train))
