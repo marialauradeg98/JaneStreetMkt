@@ -5,7 +5,7 @@ The idea is that we want to have features highly correleted with the class
 and with a low correlation between them.
 To achieve this goal we eliminate feature highly correlated with multiple
 features and select between the remainings the ones with an high correlation
-with the class
+with the class.
 """
 import time
 import pandas as pd
@@ -16,7 +16,7 @@ from data_visualization_main import corr_filter
 def remove_features(data, list_duplicates):
     """
     This function removes rows from the higly correlated DataFrame
-    containing the names in list duplicates
+    containing the names in list duplicates.
     Parameters
     ----------
     data: DataFrame
@@ -154,7 +154,7 @@ def remove_redundat_feat(data, series, treshold):
 def compute_correlation(filepath=None):
     """
     This function computes and saves the correlation matrix of the test set
-    and the matrix with feature pairings with correlation greater than 0.9
+    and the matrix with feature pairings with correlation greater than 0.9.
     Parameters
     ----------
     filepath: str (default=None)

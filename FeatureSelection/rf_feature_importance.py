@@ -1,9 +1,9 @@
 """
-This feature selection model is based on a tecnique explained in the book Advances
-in financial ML by
+This feature selection model is based on a tecnique explained in the book "Advances
+in financial ML" by De Prado
 The idea behind the tecnique is to use a RF classifier to compute the MDI feature importance
 of each feature. MDI is normalize to 1 and if each feature is equally
-important each of them should have an MSI score of 1/n (n=number of features).
+important each of one them should have an MDI score of 1/n (n=number of features).
 This means we can remove the features with a (MDI score + standard deviation) minor
 than 1/n.
 """
@@ -24,7 +24,7 @@ def compute_feat_imp(model, columns_names):
 
     Parameters
     ----------
-    model: float
+    model: classifier
         the RF model
     column_names: list of strings
         the names of the features
@@ -109,8 +109,8 @@ if __name__ == "__main__":
 
     # divide test and training set
     X_train, y_train, X_test, y_test = split_data(data)
-    print(X_train.shape)
 
+    # params of the RF model
     params = {'n_estimators': 250,
               'max_features': "auto",
               'max_depth': 50,
@@ -159,5 +159,5 @@ if __name__ == "__main__":
     print("a little recap of the results:")
     print(end_results)
 
-    # save results and removed features as csv
+    # save results features as csv
     end_results.to_csv("Results/results_del_feat.csv")

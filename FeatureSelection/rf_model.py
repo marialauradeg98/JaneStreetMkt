@@ -1,4 +1,13 @@
-""" a """
+"""
+In the first part of this module we implement a bayesian optimizer to find the
+best hyperparameters for an RF algorithm.
+After that we fit the model with the best hyperparameters using a 5 fold
+TimeSeriesSplit cross validation and we compute the accuracy on training and test set.
+TimeSeriesSplit is used for 2 reasons:
+1) We want to make sure that the models doesn't look into future data
+2) We can introduce a gap between test and train in each fold  to prevent
+   information leakage
+"""
 import time
 import pickle
 import gc
@@ -14,7 +23,19 @@ from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 
 
 def acc_model(params):
-    """ n """
+    """
+    This function computes the AUC score of the model on the validation set
+
+    Parameters
+    ----------
+    params: **kwargs
+        paramters for the RF model
+
+    Yields
+    ------
+    accuracy: float
+        AUC score
+    """
     clf = ExtraTreesClassifier(**params)
     clf.fit(X_train, y_train)  # fit RF
     predictions = clf.predict(X_val)
@@ -26,7 +47,23 @@ def acc_model(params):
 
 
 def func(params):
-    """ v """
+    """
+    This is the functon we want to minimize during the tuning process
+
+    Parameters
+    ----------
+    params: **kwargs
+        paramters for the RF model
+
+    Yields
+    ------
+    loss: float
+        the parameter we want to minimize (-AUC score)
+    status:
+        this parameter reports if an error occured while the model is fitting
+    train_time:
+        time fit the model and compute the AUC score
+    """
     begin = time.time()
     acc = acc_model(params)
     print(params, acc)
@@ -85,8 +122,11 @@ if __name__ == "__main__":
         if NEW_START is True:
             SEARCHES = 10  # number of searches at the end of a cyle
             start = time.time()  # used to get computational time
+
+            # this will contains all the informations about the search process
             trials = Trials()
-            # start of the tuning process
+
+            # search hyperparameters
             best = fmin(func, search_space, algo=tpe.suggest, max_evals=10, trials=trials)
 
             # nice prints
@@ -107,19 +147,27 @@ if __name__ == "__main__":
         CONTINUE = True
 
         while CONTINUE is True:
+
             # load previous results
             trials = pickle.load(open("Hyperopt/myfile.p", "rb"))
             start = time.time()  # used to get computational time
+
             # load total numer of evaluation already done
             textfile = open("Hyperopt/searches.txt", "r")
             SEARCHES = int(textfile.read())
             textfile.close()
+
             SEARCHES = SEARCHES+10  # at the end of the cycle we will have ten more evaluations
+
+            # searh hyperparameters
             best = fmin(func, search_space, algo=tpe.suggest, max_evals=SEARCHES, trials=trials)
             finish = (time.time()-start)/60  # time to fit model in minutes
+
+            # nice prints
             print("Time to search hyperparameters {} min".format(finish))
             print('best:')
             print(best)
+
             # The trials database now contains 10 +searches entries
             # it can be saved/reloaded with pickle
             pickle.dump(trials, open("Hyperopt/myfile.p", "wb"))
