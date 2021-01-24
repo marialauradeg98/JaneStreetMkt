@@ -71,7 +71,8 @@ def compute_profit(d_frame: pd.DataFrame):
     # compute t and u
     val_t = p_i.sum()/np.sqrt((p_i**2).sum())*np.sqrt(250/days)
     val_u = min(max(val_t, 0), 6)*p_i.sum()
-    print("If we take an action every time we have resp > 0 .\n The expected utility is {: .3f} after {} days of traiding .\n".format(
+    print("If we take an action every time we have resp > 0.")
+    print("The expected utility is {: .3f} after {} days of traiding .\n".format(
         val_u, days))
     return (val_u, days)
 
@@ -112,7 +113,7 @@ def activity_choice():
                 \n2)Plot main features over time \n3)Correlation analysis \
                 \n4)Plot anonymous features over time \n5)Missing data analysis \
                 \n6)Usefull histograms for main features \n7)Usefull histograms for anonymous features \
-                \n 8)Boxplot for main features\n9)Exit programm\n")
+                \n8)Boxplot for main features\n9)Exit programm\n")
 
 
 def plot_main_features(data):
@@ -143,47 +144,17 @@ def plot_main_features(data):
     save_oneplot_options("Figures/cumsum_resps.png")
 
 
-def correlation_analysis(data):
+def correlation_analysis():
     """
-    This function is used to evaluate the correlation between the features and to
-    build the scatter plots for the most correlated features.
-    The user can decide if save or not the figures obtained.
-    Parameters
-    ----------
-    data: Pandas dataframe
-        The dataset we are working on.
+    This function prints higly correlated feature pairings
+
     """
-    # select highly correlated features (correlation> 0.9 or <-0.9)
-    corr_matrix_90 = corr_filter(data, 0.90)
-    # couting the number of higly correlated features
-    features_90 = (corr_matrix_90.count()).sum()
-    print("The number of pairings with correlation > 0.90 is {}.\n" .format(features_90))
-    # sort the correlation matrix obtained before
-    sorted_matrix = corr_matrix_90.sort_values(ascending=False)
-    print(sorted_matrix)
-    sorted_matrix.to_csv("Matrices/features_to_remove2.csv")
-    # scatter plot most correlated features pairings
-    print("Working on scatter plot most correlated features...\n")
-    fig0, axes = plt.subplots(2, 2, figsize=(6, 6))
-    fig0.suptitle("Scatter plot higly correlated features", fontsize=20)
-    fig0.subplots_adjust(wspace=0.5, hspace=0.3)
-    x = [data.loc[:, 'feature_60'], data.loc[:, 'feature_62'],
-         data.loc[:, 'feature_65'], data.loc[:, 'feature_67']]
-    y = [data.loc[:, 'feature_61'], data.loc[:, 'feature_63'],
-         data.loc[:, 'feature_66'], data.loc[:, 'feature_68']]
-    axes[0, 0].scatter(x=x[0], y=y[0], marker=",", s=5)
-    axes[0, 0].set_xlabel('Feature 60')
-    axes[0, 0].set_ylabel('Feature 61')
-    axes[0, 1].scatter(x=x[1], y=y[1], marker=",", s=5)
-    axes[0, 1].set_xlabel('Feature 62')
-    axes[0, 1].set_ylabel('Feature 63')
-    axes[1, 0].scatter(x=x[2], y=y[2], marker=",", s=5)
-    axes[1, 0].set_xlabel('Feature 65')
-    axes[1, 0].set_ylabel('Feature 66')
-    axes[1, 1].scatter(x=x[3], y=y[3], marker=",", s=5)
-    axes[1, 1].set_xlabel('Feature 67')
-    axes[1, 1].set_ylabel('Feature 68')
-    save_oneplot_options("Figures/scatter_correlation.png")
+
+    higly_corr_feat = pd.read_csv("Matrices/features_to_remove.csv")
+    num_feat = higly_corr_feat.shape[0]
+    print("The number of pairings with correlation > 0.90 is {}.\n" .format(num_feat))
+    print("Those are:")
+    print(higly_corr_feat)
 
 
 def plot_anon_features(data):
@@ -229,7 +200,7 @@ def missing_data_analysis(data, threshold):
     # select features with missing values over a choosen threshold
     miss_values = miss_values[(miss_values > data.count()*threshold)]
     # plot the relative bar plot
-    fig2 = miss_values.plot(kind="bar", fontsize=10, figsize=(10, 6))
+    miss_values.plot(kind="bar", fontsize=10, figsize=(10, 6))
     plt.title("Features with most missing values", fontsize=20)
     plt.subplots_adjust(bottom=0.2)
     save_oneplot_options("Figures/missing_data.png")
@@ -250,14 +221,14 @@ def hist_main_features(data):
                              "resp_3", "resp_4", "weight", "weighted_resp", "action", "date"]]
     # plot histogram of actions and features_0
     print("Working on histograms of action...\n")
-    fig5 = data.loc[:, ["action"]].plot(kind="hist", legend=True, fontsize=18, figsize=(
+    data.loc[:, ["action"]].plot(kind="hist", legend=True, fontsize=18, figsize=(
         6, 6), bins=2, rwidth=0.8, range=[-.5, 1.5])
     plt.xticks([0, 1])
     plt.subplots_adjust(left=0.2, right=.9)
     plt.title("Histogram for action", fontsize=20)
     save_oneplot_options("Figures/histogram_action")
     print("Working on histograms of feature 0...\n")
-    fig6 = data.loc[:, ["feature_0"]].plot(kind="hist", legend=True, fontsize=18, figsize=(
+    data.loc[:, ["feature_0"]].plot(kind="hist", legend=True, fontsize=18, figsize=(
         6, 6), bins=2, rwidth=0.8, range=[-2, 2])
     plt.subplots_adjust(left=0.2, right=.9)
     plt.title("Histogram for feature 0", fontsize=20)
@@ -269,7 +240,7 @@ def hist_main_features(data):
     # equal to the mean variance between the features excluding weight
     # (very high variance)
     mean_var = data_main.drop(["weight"], axis=1).var().mean()
-    fig8 = data_main.drop(["date", "action"], axis=1).plot(subplots=True, layout=(
+    data_main.drop(["date", "action"], axis=1).plot(subplots=True, layout=(
         4, 2), figsize=(6., 6.), kind="hist", bins=100, yticks=[],
         range=([-mean_var, mean_var]))
     plt.suptitle("Histogram main features", fontsize=20)
@@ -289,7 +260,7 @@ def hist_anon_features(data):
     data_anon = data.drop(["resp", "resp_1", "resp_2", "resp_3", "resp_4",
                            "weight", "weighted_resp", "action", "ts_id"], axis=1)
     names = []  # empty list, it will store the names of the png files
-    figs, axs = plt.subplots(3, 3, figsize=(6, 6))
+    plt.subplots(3, 3, figsize=(6, 6))
     print("Working on plot the histograms of the anonymous features...\n")
     # create 14 images 3x3 containig plot of each anonymous features
     for i in range(14):
@@ -321,7 +292,7 @@ def boxplot_main(data):
                              "resp_3", "resp_4", "weight", "weighted_resp", "action", "date"]]
     print("Working on boxplot of features...\n")
     # Plot th boxplot (outliers aren't shown)
-    fig9 = data_main.drop(["weight", "action", "date"], axis=1).plot(
+    data_main.drop(["weight", "action", "date"], axis=1).plot(
         kind="box", grid=False, whis=(10, 90), meanline=True, vert=False,
         figsize=(7, 6), sym="", label="wiskers rapresent I$_{10}$ and I$_{90}$")
     plt.subplots_adjust(left=0.2)
@@ -330,7 +301,7 @@ def boxplot_main(data):
     save_oneplot_options("Figures/boxplot_main.png")
 
 
-def save_data_options(object, name_save):
+def save_data_options(data, name_save):
     """
     This fuction is used for the save options of a dataframe as .cvs.
     Parameters
@@ -340,16 +311,16 @@ def save_data_options(object, name_save):
     name_save: string
         Figure's name.
     """
-    SAVEFLAG = False
-    while SAVEFLAG is False:
+    save_flag = False
+    while save_flag is False:
         save = input("Done. \nDo you want to save it?\ny/n\n")
         if save == "y":
             # save new matrix as csv
-            object.round(3).to_csv(name_save)
+            data.round(3).to_csv(name_save)
             print("Saved successfully as {}\n".format(name_save))
-            SAVEFLAG = True
+            save_flag = True
         elif save == "n":
-            SAVEFLAG = True
+            save_flag = True
         else:
             print("Please enter valid key.\n")
 
@@ -362,16 +333,16 @@ def save_oneplot_options(name_save):
     name_save: string
         Figure's name.
     """
-    SAVEFLAG = False
-    while SAVEFLAG is False:
+    save_flag = False
+    while save_flag is False:
         # reads from input if we need to save the plot
         save = input("Done. \nDo you want to save it?\ny/n\n")
         if save == "y":
             plt.savefig(name_save, dpi=300)
             print("Saved successfully as {}\n".format(name_save))
-            SAVEFLAG = True
+            save_flag = True
         elif save == "n":
-            SAVEFLAG = True
+            save_flag = True
         else:
             print("Please enter valid key.\n")
         plt.show()
@@ -386,16 +357,16 @@ def save_plots_options(names_save):
     names_save: list
         List in which we stored figures' names.
     """
-    SAVEFLAG = False
-    while SAVEFLAG is False:
+    save_flag = False
+    while save_flag is False:
         save = input("Done. \nDo you want to save them?\ny/n\n")
         if save == "y":
             for name in names_save:
                 plt.savefig(name, dpi=300)
             print("Saved successfully.\n")
-            SAVEFLAG = True
+            save_flag = True
         elif save == "n":
-            SAVEFLAG = True
+            save_flag = True
         else:
             print("Please enter valid key.\n")
         plt.show()
@@ -406,31 +377,31 @@ if __name__ == '__main__':
     # start time for the exection of this main
     start = time.time()
     # import the choosen dataset
-    data = initial_import.main()
+    comp_data = initial_import.main()
     # compute the maximum value of u possible
-    u_val, days = compute_profit(data)
+    u_val, tradng_days = compute_profit(comp_data)
     # user window
     FLAG = False  # used to make sure to go back once an invalid string is entered
     while FLAG is False:
         value = activity_choice()
         if value == "1":
             # compute matrix containig useful statistical informations
-            stats = statistical_matrix(data)
+            stats = statistical_matrix(comp_data)
             save_data_options(stats, "Matrices/stats_complete.csv")
         elif value == "2":
-            plot_main_features(data)
+            plot_main_features(comp_data)
         elif value == "3":
-            correlation_analysis(data)
+            correlation_analysis()
         elif value == "4":
-            plot_anon_features(data)
+            plot_anon_features(comp_data)
         elif value == "5":
-            missing_data_analysis(data, .005)
+            missing_data_analysis(comp_data, .005)
         elif value == "6":
-            hist_main_features(data)
+            hist_main_features(comp_data)
         elif value == "7":
-            hist_anon_features(data)
+            hist_anon_features(comp_data)
         elif value == "8":
-            boxplot_main(data)
+            boxplot_main(comp_data)
         elif value == "9":
             print("End session.\n")
             FLAG = True
