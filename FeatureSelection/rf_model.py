@@ -72,13 +72,14 @@ def func(params):
 
 
 if __name__ == "__main__":
-    CORRELATION = True
+
+    CORRELATION = False
     NEW_START = False
     SKIP_85_DAYS = True
     NO_0_WEIGHT = False
-    RF_IMPORTANCE = True
+    RF_IMPORTANCE = False
     HYPERPARAMETER_SEARCH = False
-    ITERATION = 100
+    ITERATION = 1000
 
     data = import_training_set()  # import training set
 
@@ -109,9 +110,9 @@ if __name__ == "__main__":
         search_space = {
             "n_estimators": hp.choice("n_estimators", range(100, 750)),
             "max_features": hp.choice("max_features", ["auto", "log2"]),
-            "max_depth": hp.choice("max_depth", range(10, 70)),
+            "max_depth": hp.choice("max_depth", range(5, 35)),
             "min_samples_leaf": hp.choice("min_samples_leaf", range(1, 20)),
-            "max_samples": hp.uniform("max_samples", 0.1, 0.33),
+            "max_samples": hp.uniform("max_samples", 0.1, 0.25),
             "bootstrap": True,
             "criterion": hp.choice("criterion", ["gini", "entropy"]),
             "random_state": 18,
@@ -137,9 +138,9 @@ if __name__ == "__main__":
 
             # The trials database now contains 10 entries, it can be saved/reloaded with pickle
 
-            pickle.dump(trials, open("Hyperopt/myfile.p", "wb"))
+            pickle.dump(trials, open("Hyperopt/myfile2.p", "wb"))
             # write on a txt file number of trials done
-            search_file = open("Hyperopt/searches.txt", "w")
+            search_file = open("Hyperopt/searches2.txt", "w")
             search_file.write("{}".format(SEARCHES))
             search_file.close()
 
@@ -149,11 +150,11 @@ if __name__ == "__main__":
         while CONTINUE is True:
 
             # load previous results
-            trials = pickle.load(open("Hyperopt/myfile.p", "rb"))
+            trials = pickle.load(open("Hyperopt/myfile2.p", "rb"))
             start = time.time()  # used to get computational time
 
             # load total numer of evaluation already done
-            textfile = open("Hyperopt/searches.txt", "r")
+            textfile = open("Hyperopt/searches2.txt", "r")
             SEARCHES = int(textfile.read())
             textfile.close()
 
@@ -170,10 +171,10 @@ if __name__ == "__main__":
 
             # The trials database now contains 10 +searches entries
             # it can be saved/reloaded with pickle
-            pickle.dump(trials, open("Hyperopt/myfile.p", "wb"))
+            pickle.dump(trials, open("Hyperopt/myfile2.p", "wb"))
 
             # save new number of total evaluations
-            search_file = open("Hyperopt/searches.txt", "w")
+            search_file = open("Hyperopt/searches2.txt", "w")
             search_file.write("{}".format(SEARCHES))
             search_file.close()
 
@@ -185,37 +186,27 @@ if __name__ == "__main__":
     else:
         # divide test and training set
         X, y, X_test, y_test = split_data(data)
+        print(X.shape)
 
         # define parameters of cross validation
         N_FOLDS = 5
         folds = TimeSeriesSplit(n_splits=N_FOLDS,
-                                max_train_size=int(1e6),
                                 test_size=int(2e5),
                                 gap=int(2e5))
 
         # best hyperparameters for the model
 
-        parameters = {'n_estimators': 433,
-                      'max_features': "auto",
-                      'max_depth': 60,
-                      'bootstrap': True,
-                      'min_samples_leaf': 7,
-                      "max_samples": 0.66,  # 0.265
-                      'verbose': 1,
-                      'n_jobs': -1,
-                      'random_state': 18}
-        '''
         parameters = {'criterion': "gini",
-                      'n_estimators': 285,
+                      'n_estimators': 577,
                       'max_features': "auto",
-                      'max_depth': 41,
+                      'max_depth': 22,
                       'bootstrap': True,
-                      'min_samples_leaf': 10,
-                      "max_samples": 0.1945,
+                      'min_samples_leaf': 6,
+                      "max_samples": 0.1259,
                       'verbose': 1,
                       'n_jobs': -1,
                       'random_state': 18}
-        '''
+
         # create model
         splits = folds.split(X, y)
         forest = ExtraTreesClassifier(**parameters)
@@ -236,6 +227,7 @@ if __name__ == "__main__":
             forest.fit(X_train, y_train)
             score = forest.score(X_val, y_val)
             score_cv.append(score)
+            print(score_cv)
 
             # delete train and validation set to save memory
             del X_train, X_val, y_train, y_val
@@ -247,6 +239,10 @@ if __name__ == "__main__":
         print("accuracy score of each iteration is")
         print(score_cv)
         print("Time to fit the RF with {}k cross validation {:.2f} min".format(N_FOLDS, finish))
+
+        # save model
+        filename = "RF_6.sav"
+        pickle.dump(forest, open(filename, "wb"))
 
         # compute accuracy on test and training set
         score_test = forest.score(X_test, y_test)
@@ -265,3 +261,11 @@ if __name__ == "__main__":
 
         # save results and removed features as csv
         end_results.to_csv("Results/results_cv_subsample{}.csv".format(ITERATION))
+
+        # compute AUC score
+        pred_train = forest.predict(X)
+        pred_test = forest.predict(X_test)
+        auc_train = roc_auc_score(y, pred_train)
+        auc_test = roc_auc_score(y_test, pred_test)
+        print("AUC on training set is: {} \nAUC on test set is: {}".format(
+            auc_train, auc_test))
