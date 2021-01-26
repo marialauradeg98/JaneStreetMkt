@@ -1,45 +1,26 @@
+"""
+This module is used for the hyperparameters optimization in our deep
+neural network. We implemented our search using Keras Tuner, in particular the
+so called Random Search for finding hyperparameters which maximize the val_auc.
+"""
 import time
-import pandas as pd
+#import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import cross_val_score, TimeSeriesSplit
-import matplotlib.pyplot as plt
-import kerastuner
+from kerastuner import Objective
 from kerastuner.tuners import RandomSearch
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.utils import np_utils
-from keras.layers import Input, Dense, Dropout, Activation, BatchNormalization
+from keras.layers import Dense, Activation, BatchNormalization
 from keras.optimizers import Adam
-from keras.models import Model, Sequential
+from keras.models import Sequential
 from initial_import import import_training_set
 from splitting import split_data
 import feature_selection
 
 
-"""
-This module is used for the hyperparameters optimization in our deep neural network
-We implemented our search using Keras Tuner, in particular the so called Random Search
-for finding hyperparameters which maximize the AUC.
-"""
-import time
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import TimeSeriesSplit
-import matplotlib.pyplot as plt
-from kerastuner.tuners import RandomSearch
-from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Input, Dense, Dropout, Activation, BatchNormalization
-from keras.optimizers import Adam
-from keras.models import Model, Sequential
-from initial_import import import_training_set
-from splitting import split_data
-
-
 def build_model(hp):
     """
-    This function in used for build the neural network model specifing the hyperparameters
-    we want to optimize and their searching rate.
+    This function in used for build the neural network model, specifing the
+    hyperparameters we want to optimize and their searching rate.
     Parameters
     ----------
     hp: Keras Tuner hyperparameter
@@ -49,63 +30,70 @@ def build_model(hp):
     model: Keras Model
         The deep neural network model we built
     """
-    print(type(hp))
+    #defining the type of model we want to use
     model = Sequential()
-    model.add(BatchNormalization())  # re-centring and rescaling input layer
-    # a fraction of nodes is discarded with a frequency equal to the rate
-    model.add(Dropout(rate=hp.Float('dropout0'+str(0), min_value=0.1, max_value=0.5)))
+    #re-centring and rescaling
+    model.add(BatchNormalization())
+    #iterations on the number of layers
     for i in range(hp.Int('num_layers', 2, 5)):
+        #dense layer with a variable number of hidden units
         model.add(Dense(units=hp.Int('hidden_units'+str(i), min_value=64,
                                      max_value=512, step=64), activation='relu'))
+        #new normalization step
         model.add(BatchNormalization())
+        #defining the activation function
         model.add(Activation('relu'))
-        model.add(Dropout(rate=hp.Float('dropout_rates' + str(i), min_value=0.1, max_value=0.5)))
+    #final dense layer with its activation function
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer=Adam(
-        learning_rate=0.00810), metrics=['AUC'])
-    print(type(model))
+    #compile our model choosing the type of loss, optimizer and metrics we want to use
+    model.compile(loss='binary_crossentropy',
+                  optimizer=Adam(learning_rate=0.00810), metrics=['AUC'])
     return model
 
 
 if __name__ == '__main__':
-    # import data
+    start = time.time()
+    # import training dataset
+    print('Importing training set...')
     data = import_training_set()
-    # delete first 85 days of dataset
-    data = data[data["date"] > 85]
-    data["date"] = data["date"]-85
-
+    print('Training set imported successfully.')
     # Remove feature based on correlation
     useless = feature_selection.main(0.93)
     data = data.drop(useless, axis=1)
-
     # remove features based on MDI feature importance
     redunant_feat = np.loadtxt(
         "../FeatureSelection/Results/deleted_feat_skip85.csv", dtype="str")
     data = data.drop(redunant_feat, axis=1)
-    # splitting dataset in training,test and validation set
+
+    #if the training set is too heavy to import you can directly import the reduced dataset we built
+    #data = pd.read_csv("reduced_dataset.csv", index_col=0, dtype="float32")
+
+    # splitting dataset in training,test and validation sets
     X_tr, y_tr, X_test, y_test, X_val, y_val = split_data(data, val=True)
-    # set the Random search specifing the quantity we want to maximize: AUC
+    # set the Random search specifing the quantity we want to maximize (val_auc)
     tuner = RandomSearch(
         build_model,
         seed=18,
-        objective=kerastuner.Objective('val_auc', 'max'),
-        max_trials=10,
-        executions_per_trial=1,
+        objective=Objective('val_auc', 'max'),
+        max_trials=20,#number of hyperparameter combinations that will be tested by the tuner
+        executions_per_trial=1, #number of models that should be built and fit for each trial
         directory='randomsearch',
         project_name='keres_tuner')
     # define usefull callbacks
-    # reduce learning rate when AUC stops to increase
-    reduce_lr = ReduceLROnPlateau(monitor='val_auc', factor=0.2, patience=5, mode='max')
-    # stop training when the AUC stops to increase
+    # reduce learning rate when val_auc stops to increase
+    reduce_lr = ReduceLROnPlateau(monitor='val_auc', factor=0.2,
+                                  patience=5, mode='max')
+    #stop training when val_auc stops to increase
     es = EarlyStopping(monitor='val_auc', patience=6, mode='max', min_delta=0.001)
-    # start the search for our hyperparameters
+    #start the search for our hyperparameters
     tuner.search(X_tr, y_tr, epochs=20000, callbacks=[
                  es, reduce_lr], batch_size=4096, validation_data=(X_val, y_val))
-    # print the best results
+    # print a summary of out tuning actions
     tuner.results_summary()
-    best_model = tuner.get_best_models(1)[0]
-    best_hyperparameters = tuner.get_best_hyperparameters(1)[0]
-    print('After the search, the best hyperparameters are:\n {}'.format(best_hyperparameters))
+    #print the best parameters obtained by the Random Search
+    best_hp = tuner.get_best_hyperparameters()[0].values
+    print('The best hyperparameters are:\n')
+    print(best_hp)
     # compute execution time
     mins = (time.time()-start)//60
     sec = (time.time()-start) % 60
