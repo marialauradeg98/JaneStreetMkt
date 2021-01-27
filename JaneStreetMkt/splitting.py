@@ -1,6 +1,9 @@
+"""
+This module contains the function split_data we used every time we had to
+split our dataset to create training set and test set and occasionally also
+validation set.
+"""
 import numpy as np
-
-
 def split_data(data, no_fill=False, val=False):
     """
     This function splits the dataset in test set and training set or in test set,
@@ -13,8 +16,6 @@ def split_data(data, no_fill=False, val=False):
         The dataset we want to split
     no_fill: bool, default=False
         If False replace missing data with outliers, if True not.
-    gap: float, default=10
-        Gap in terms of percentage of total trading days considered.
     val: bool, default= False
         If False we divide the dataset in test set and training set, if True
         we also built a validation set.
@@ -39,11 +40,11 @@ def split_data(data, no_fill=False, val=False):
     # find the number of trading day
     num_days = data["date"].iloc[-1]
     # Compute the gap between the training and test set
-    gap = num_days*5//100
+    gap = num_days*10//100
 
     if val is False:
         # split training and test set with our choosen percentage
-        days_train = num_days*4//5
+        days_train = num_days*3//4
         days_test = days_train+gap
         print("Trainig set begins at day 0 and ends at day {}".format(days_train))
         print("Test set begins at day {} and ends at day {}".format(days_test, num_days))
@@ -51,7 +52,7 @@ def split_data(data, no_fill=False, val=False):
         data_train = data[data["date"] <= days_train]
     else:
         # split training,test and validation set with our choosen percentage
-        days_train = num_days*65//100
+        days_train = num_days*55//100
         days_val = (days_train + gap, days_train + gap+num_days//10)
         days_test = days_val[1]+gap
         print("trainig set begins at day 0 and ends at day {}".format(days_train))
@@ -80,5 +81,4 @@ def split_data(data, no_fill=False, val=False):
 
     if val is False:
         return X_train, y_train, X_test, y_test
-    else:
-        return X_train, y_train, X_test, y_test, X_val, y_val
+    return X_train, y_train, X_test, y_test, X_val, y_val
