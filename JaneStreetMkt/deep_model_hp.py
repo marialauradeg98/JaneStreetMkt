@@ -9,7 +9,7 @@ import numpy as np
 from kerastuner import Objective
 from kerastuner.tuners import RandomSearch
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from keras.layers import Dense, Activation, BatchNormalization
+from keras.layers import Dense, BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Sequential
 from initial_import import import_training_set
@@ -39,10 +39,6 @@ def build_model(hp):
         #dense layer with a variable number of hidden units
         model.add(Dense(units=hp.Int('hidden_units'+str(i), min_value=64,
                                      max_value=512, step=64), activation='relu'))
-        #new normalization step
-        model.add(BatchNormalization())
-        #defining the activation function
-        model.add(Activation('relu'))
     #final dense layer with its activation function
     model.add(Dense(1, activation='sigmoid'))
     #compile our model choosing the type of loss, optimizer and metrics we want to use
