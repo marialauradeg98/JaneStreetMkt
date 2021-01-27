@@ -1,0 +1,2 @@
+,AUC test ,AUC training,computational time (min),mean AUC,splits,standard deviation
+values,0.5140910553855247,0.7152971610181953,20.307282332579295,0.5136469875468367,5,0.0029039463176216054
