@@ -1,7 +1,7 @@
 """
 In the first part of this module we implement a bayesian optimizer to find the
 best hyperparameters for an RF algorithm.
-After that we fit 3 models with the 3 best hyperparameters using a 5 fold
+After that we fit 2 models with the 2 best hyperparameters using a 5 fold
 TimeSeriesSplit cross validation and we compute the accuracy on training and test set.
 TimeSeriesSplit is used for 2 reasons:
 1) We want to make sure that the models doesn't look into future data
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     SKIP_85_DAYS = True
     NO_0_WEIGHT = False
     RF_IMPORTANCE = False
-    HYPERPARAMETER_SEARCH = True
+    HYPERPARAMETER_SEARCH = False
 
     data = import_training_set()  # import training set
 
@@ -171,8 +171,7 @@ if __name__ == "__main__":
             "bootstrap": True,
             "criterion": hp.choice("criterion", ["gini", "entropy"]),
             "random_state": 18,
-            "n_jobs": -1,
-        }
+            "n_jobs": -1}
 
         # if newstart is true we start optimization from scratch
         if NEW_START is True:
@@ -242,7 +241,7 @@ if __name__ == "__main__":
         # split data
         X, y, X_test, y_test = split_data(data)
 
-        # best 3 hyperparameter from search
+        # best 2 hyperparameter from search
 
         parameters1 = {'criterion': "gini",
                        'n_estimators': 398,
@@ -256,17 +255,6 @@ if __name__ == "__main__":
                        'random_state': 18}
 
         parameters2 = {'criterion': "gini",
-                       'n_estimators': 672,
-                       'max_features': "auto",
-                       'max_depth': 37,
-                       'bootstrap': True,
-                       'min_samples_leaf': 14,
-                       "max_samples": 0.1546,
-                       'verbose': 1,
-                       'n_jobs': -1,
-                       'random_state': 18}
-
-        parameters3 = {'criterion': "gini",
                        'n_estimators': 577,
                        'max_features': "auto",
                        'max_depth': 22,
@@ -277,39 +265,49 @@ if __name__ == "__main__":
                        'n_jobs': -1,
                        'random_state': 18}
 
-        # create 3 different models
+        # create 2 different models
         forest1 = ExtraTreesClassifier(**parameters1)
         forest2 = ExtraTreesClassifier(**parameters2)
-        forest3 = ExtraTreesClassifier(**parameters3)
 
-        forests = (forest1, forest2, forest3)
+        forests = (forest1, forest2)
 
         # set number of fold for CV
         N_FOLDS = 5
 
-        # train eeach model with 5k CV
+        # train each model with 5k CV
         for i, forest in enumerate(forests):
+
             print("Fitting forest with hyperparameters:")
             print(forest)
             start = time.time()
-            time_cv(forest, N_FOLDS)
+            auc_cv = time_cv(forest, N_FOLDS)
+
+            # compute mean auc computational time and standard deviation
+            mean_auc = mean(auc_cv)
+            std_auc = stdev(auc_cv)
             finish = (time.time()-start)/60  # time to fit model in minutes
+
+            # nice prints
             print("Time to fit the RF{} with {}k cross validation {:.2f} min".format(
                 i, N_FOLDS, finish))
+            print("mean AUC {:.4f} \nstandard deviation {:.4f}".format(mean_auc, std_auc))
 
             # save model
             filename = ("RF_{}.sav".format(i))
             pickle.dump(forest, open(filename, "wb"))
 
-            # compute accuracy on test and training set
-            score_test = forest.score(X_test, y_test)
-            score_training = forest.score(X, y)
-            print("Accuracy of RF{} on training set is: {} \nAccuracy on test set is: {}".format(
-                i, score_training, score_test))
+            # compute AUC on test and training set
+            pred_train = forest.predict(X)
+            pred_test = forest.predict(X_test)
+            score_train = roc_auc_score(y, pred_train)
+            score_test = roc_auc_score(y_test, pred_test)
+            print("AUC of RF{} on training set is: {} \nAUC on test set is: {}".format(
+                i, score_train, score_test))
 
             # create a dataframe that sumarizes the results
-            results = {"score test ": score_test, "score training": score_training,
-                       "computational time (min)": finish, "splits": N_FOLDS}
+            results = {"AUC test ": score_test, "AUC training": score_train,
+                       "computational time (min)": finish, "splits": N_FOLDS,
+                       "mean AUC": mean_auc, "standard deviation": std_auc}
             end_results = pd.DataFrame(results, index=["values"])
 
             # nice print
@@ -318,11 +316,3 @@ if __name__ == "__main__":
 
             # save results
             end_results.to_csv("Results/RF_{}.csv".format(i))
-
-            # compute AUC score
-            pred_train = forest.predict(X)
-            pred_test = forest.predict(X_test)
-            auc_train = roc_auc_score(y, pred_train)
-            auc_test = roc_auc_score(y_test, pred_test)
-            print("AUC of RF{} on training set is: {} \nAUC on test set is: {}".format(
-                i, auc_train, auc_test))

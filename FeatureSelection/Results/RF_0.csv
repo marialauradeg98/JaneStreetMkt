@@ -1,2 +1,2 @@
-,computational time (min),score test ,score training,splits
-values,12.158116130034129,0.5145861068640161,0.6327756251285833,5
+,AUC test ,AUC training,computational time (min),mean AUC,splits,standard deviation
+values,0.5145734641982056,0.6324174471935943,12.48091910680135,0.5148969852023431,5,0.0033057554158781237
