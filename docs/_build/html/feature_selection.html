@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API documentation &#8212; Jane Street Market  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="api-documentation">
+<h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-FeatureSelection.feature_selection">
+<span id="feature-selection"></span><h2>Feature Selection<a class="headerlink" href="#module-FeatureSelection.feature_selection" title="Permalink to this headline">¶</a></h2>
+<p>The main goal of this module is to make a first attempt at feature selection
+through a correlation analysis.
+The idea is that we want to have features highly correleted with the class
+and with a low correlation between them.
+To achieve this goal we eliminate feature highly correlated with multiple
+features and select between the remainings the ones with an high correlation
+with the class.</p>
+<dl class="py function">
+<dt id="FeatureSelection.feature_selection.compute_correlation">
+<code class="sig-prename descclassname">FeatureSelection.feature_selection.</code><code class="sig-name descname">compute_correlation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.feature_selection.compute_correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes and saves the correlation matrix of the test set
+and the matrix with feature pairings with correlation greater than 0.9.
+Parameters
+———-
+filepath: str (default=None)</p>
+<blockquote>
+<div><p>filepath where the two matrices wll be saved</p>
+</div></blockquote>
+<p>2 csv files containing the two matrices</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="FeatureSelection.feature_selection.main">
+<code class="sig-prename descclassname">FeatureSelection.feature_selection.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">treshold</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.feature_selection.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the main of the module.
+It combines all the previously defined functions to do a feature selections.
+Parameters
+———-
+treshold: float</p>
+<blockquote>
+<div><p>the correlation treshold we use to consider feature pairings.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>new_list: list of str</dt><dd><p>list containig the features to remove.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="FeatureSelection.feature_selection.remove_duplicates">
+<code class="sig-prename descclassname">FeatureSelection.feature_selection.</code><code class="sig-name descname">remove_duplicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">treshold</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.feature_selection.remove_duplicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds features highly correlated with multiple features.
+They will be the first features we are going to remove.
+Parameters
+———-
+data: DataFrame</p>
+<blockquote>
+<div><p>original dataframe from wich we want to remove features.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>treshold: float</dt><dd><p>the correlation treshold we use to consider feature pairings.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>purged_data: Dataframe</dt><dd><p>a dataframe without the features in list duplicates</p>
+</dd>
+<dt>new_list: list of str</dt><dd><p>list containig the features with multiple correlation pairings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="FeatureSelection.feature_selection.remove_features">
+<code class="sig-prename descclassname">FeatureSelection.feature_selection.</code><code class="sig-name descname">remove_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">list_duplicates</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.feature_selection.remove_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function removes rows from the higly correlated DataFrame
+containing the names in list duplicates.
+Parameters
+———-
+data: DataFrame</p>
+<blockquote>
+<div><p>original dataframe from which we want to remove features.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>list_duplicates: list of str</dt><dd><p>a list of strings containig the names of the features we want to remove.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>new_data: Dataframe</dt><dd><p>a dataframe without the features in list duplicates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="FeatureSelection.feature_selection.remove_redundat_feat">
+<code class="sig-prename descclassname">FeatureSelection.feature_selection.</code><code class="sig-name descname">remove_redundat_feat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">series</span></em>, <em class="sig-param"><span class="n">treshold</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.feature_selection.remove_redundat_feat" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function select from each correlation pairing the one with less class correlation
+in order to remove it.
+Parameters
+———-
+data: DataFrame</p>
+<blockquote>
+<div><p>original dataframe from wich we want to remove features.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>series: Series</dt><dd><p>series containig feature-class correlation</p>
+</dd>
+<dt>treshold: float</dt><dd><p>the correlation treshold we use to consider feature pairings.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>purged_data: Dataframe</dt><dd><p>a dataframe without the feature pairings containing the randomly selected features.</p>
+</dd>
+<dt>new_list: list of str</dt><dd><p>list containig features with low class correlation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Jane Street Market</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Paolo Spina, Marialaura De Grazia.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/feature_selection.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

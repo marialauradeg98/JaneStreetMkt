@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API documentation &#8212; Jane Street Market  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="api-documentation">
+<h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-FeatureSelection.rf_feature_importance">
+<span id="feature-importance-with-random-forest"></span><h2>Feature importance with Random Forest<a class="headerlink" href="#module-FeatureSelection.rf_feature_importance" title="Permalink to this headline">¶</a></h2>
+<p>This feature selection model is based on a tecnique explained in the book “Advances
+in financial ML” by De Prado
+The idea behind the tecnique is to use a RF classifier to compute the MDI feature importance
+of each feature. MDI is normalize to 1 and if each feature is equally
+important each of one them should have an MDI score of 1/n (n=number of features).
+This means we can remove the features with a (MDI score + standard deviation) minor
+than 1/n.</p>
+<dl class="py function">
+<dt id="FeatureSelection.rf_feature_importance.compute_feat_imp">
+<code class="sig-prename descclassname">FeatureSelection.rf_feature_importance.</code><code class="sig-name descname">compute_feat_imp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">columns_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.rf_feature_importance.compute_feat_imp" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions finds the most important features of the dataset
+through the feature importance module of a random forest and deletes the redundant one.</p>
+<dl class="simple">
+<dt>model: classifier</dt><dd><p>the RF model</p>
+</dd>
+<dt>column_names: list of strings</dt><dd><p>the names of the features</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>deleted_feat: np.array of strings</dt><dd><p>the names of the redunant features</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Jane Street Market</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Paolo Spina, Marialaura De Grazia.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/feature_importance.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
