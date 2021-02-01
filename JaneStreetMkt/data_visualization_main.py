@@ -14,6 +14,7 @@ def statistical_matrix(d_frame: pd.DataFrame):
     """
     This function returns a Pandas dataframe containing useful statistical informations
     about the dataset (mean, median, max , min etc...).
+
     Parameters
     ----------
     d_frame: Pandas dataframe
@@ -33,6 +34,7 @@ def statistical_matrix(d_frame: pd.DataFrame):
 def daily_avarage(d_frame: pd.DataFrame):
     """
     This function computes the daily avarage values of each feature.
+
     Parameters
     ----------
     d_frame: Pandas dataframe
@@ -50,6 +52,7 @@ def compute_profit(d_frame: pd.DataFrame):
     """
     This function compute the maximum possible profit in terms of the variables
     recommended in the competition evaluation page.
+
     Parameters
     ----------
     d_frame: Pandas dataframe
@@ -81,6 +84,7 @@ def corr_filter(d_frame: pd.DataFrame, bound: float):
     """
     This function analyzes the correlation between the features and identifies
     the highly correlated features.
+
     Parameters
     ----------
     d_frame: Pandas dataframe
@@ -121,6 +125,7 @@ def plot_main_features(data):
     This function is used to plot main features over time in terms of cumultaive
     sum of resp.
     The user can decide if save or not the figures obtained.
+
     Parameters
     ----------
     data: Pandas dataframe
@@ -161,6 +166,7 @@ def plot_anon_features(data):
     """
     This function is used to plot the anonymous features over time (to see if
     there are some patterns). The user can decide if save or not the figures obtained.
+
     Parameters
     ----------
     data: Pandas dataframe
@@ -188,6 +194,7 @@ def missing_data_analysis(data, threshold):
     This function is used to identify features with a number of missing values
     over a threshold and build the relative bar plots.
     The user can decide if save or not the figure obtained.
+
     Parameters
     ----------
     data: Pandas dataframe
@@ -211,6 +218,7 @@ def hist_main_features(data):
     This function is used to plot histograms about main features distributions,
     particularly the categorical features: action and feature 0.
     The user can decide if save or not the figures obtained.
+
     Parameters
     ----------
     data: Pandas dataframe
@@ -251,6 +259,7 @@ def hist_anon_features(data):
     """
     This function is used to plot histograms about anonymous features distributions.
     The user can decide if save or not the figures obtained.
+
     Parameters
     ----------
     data: Pandas dataframe
@@ -282,6 +291,7 @@ def boxplot_main(data):
     """
     This function is used to build the boxplot of main features. The user
     can decide if save or not the figure obtained.
+
     Parameters
     ----------
     data: Pandas dataframe
@@ -304,9 +314,10 @@ def boxplot_main(data):
 def save_data_options(data, name_save):
     """
     This fuction is used for the save options of a dataframe as .cvs.
+
     Parameters
     ----------
-    object: Pandas dataframe
+    data: Pandas dataframe
         Dataframe we want to save or not.
     name_save: string
         Figure's name.
@@ -328,6 +339,7 @@ def save_data_options(data, name_save):
 def save_oneplot_options(name_save):
     """
     This fuction is used for the save options and visualization of a single plot.
+
     Parameters
     ----------
     name_save: string
@@ -352,6 +364,7 @@ def save_oneplot_options(name_save):
 def save_plots_options(names_save):
     """
     This fuction is used for the save options and visualization of some plots.
+
     Parameters
     ----------
     names_save: list
