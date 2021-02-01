@@ -32,8 +32,125 @@
             
   <div class="section" id="api-documentation">
 <h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="initial-databases-import">
-<h2>Initial databases import<a class="headerlink" href="#initial-databases-import" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-JaneStreetMkt.initial_import">
+<span id="initial-databases-import"></span><h2>Initial databases import<a class="headerlink" href="#module-JaneStreetMkt.initial_import" title="Permalink to this headline">¶</a></h2>
+<p>In this module are implemented many function to import the competition dataset
+as a pandas dataframe.
+Most of those functions are only used in the visualization part of the code.</p>
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.compute_action">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">compute_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d_frame</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.compute_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This functions add the action and the weighted resp to the dataset.
+Action is equal to 1 when resp is &gt; 0 and 0 otherwise.
+Weighted resp is the product between resp and weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d_frame</strong> (<em>DataFrame</em>) – the competition DataFrame</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>d_frame</strong> (<em>DataFrame</em>) – the competition datafreme with action and weighted_resp added</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.import_dataset">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">import_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.import_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>This fuction imports the Jane Market dataset as a pandas dataframe.
+Each value in the dataframe is imported as to float32 to reduce memory usage.
+To import the datset the pandas function read_csv is used.
+It gets the job done but it is a little bit slow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> (<em>int</em><em> (</em><em>default=None</em><em>)</em>) – number of rows we want to import.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em> (</em><em>default=the filepath in my pc :</em><em>) </em><em>)</em>) – filepath where the file train.csv is located.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>new_data</strong> (<em>DataFrame</em>) – the entire dataset ready to use</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.import_dataset_faster">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">import_dataset_faster</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.import_dataset_faster" title="Permalink to this definition">¶</a></dt>
+<dd><p>This fuction imports the Jane Market dataset as a pandas dataframe.
+To import the datset the datatable function fread is used.
+Then the data is converted into a dataframe.
+This approach is significantly faster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> (<em>int</em><em> (</em><em>default=None</em><em>)</em>) – number of rows we want to import.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em> (</em><em>default=the filepath in my pc :</em><em>) </em><em>)</em>) – filepath where the file train.csv is located.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>new_data</strong> (<em>DataFrame</em>) – the entire dataset ready to use</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.import_sampled_dataset">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">import_sampled_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">skip</span></em>, <em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.import_sampled_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function load a sampleed version of the original dataset.
+We sample a value every n*skip rows.
+This function is used only in the visualization module since linear sampling
+in noisy dataset is not advised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>skip</strong> (<em>int</em>) – sample a row for each multiple of skip.</p></li>
+<li><p><strong>rows</strong> (<em>int</em><em> (</em><em>default=None all rows will be imported</em><em>)</em>) – number of rows to import.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em> (</em><em>default=the filepath in my pc :</em><em>) </em><em>)</em>) – filepath where the file train.csv is located.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>new_data</strong> (<em>DataFrame</em>) – sampled dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.import_training_set">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">import_training_set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fast_pc</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">rows</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.import_training_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the import function we will call the most in the rest of the code.
+It imports the Jane Market dataset as a pandas dataframe and removes the
+6 resps features from the dataset since the competition test set
+will not have those features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fast_pc</strong> (<em>bool</em><em> (</em><em>default=False</em><em>)</em>) – False use read_csv to import data
+True use fred to import data</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>training_data</strong> (<em>DataFrame</em>) – dataset without resps</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.logic">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">logic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.logic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for slicing in import_sampled_dataset</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="JaneStreetMkt.initial_import.main">
+<code class="sig-prename descclassname">JaneStreetMkt.initial_import.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.initial_import.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function implements a interactive way to import the import the dataset.
+It reads the keabord inputs of the user to decide wich function to use to
+import the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>DataFrame</em>) – competition dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 

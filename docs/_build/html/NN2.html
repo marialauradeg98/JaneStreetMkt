@@ -44,23 +44,20 @@ best model obtained for each fold in a specific file which we save on our direct
 <code class="sig-prename descclassname">JaneStreetMkt.deep_model_cv.</code><code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dim</span></em>, <em class="sig-param"><span class="n">num_layers</span></em>, <em class="sig-param"><span class="n">hidden_units</span></em>, <em class="sig-param"><span class="n">learning_r</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.deep_model_cv.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function builts the model for our deep neural network used the hyperparameter
 we found with an optimization process.
-Parameters
-———-
-input_dim: int</p>
+:param input_dim: The tensor shape we send to the first hidden layer and must be</p>
 <blockquote>
-<div><p>The tensor shape we send to the first hidden layer and must be
-the same shape as the used training set.</p>
+<div><p>the same shape as the used training set.</p>
 </div></blockquote>
-<dl class="simple">
-<dt>num_layers: int</dt><dd><p>The number of hidden layers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_layers</strong> (<em>int</em>) – The number of hidden layers.</p></li>
+<li><p><strong>hidden_units</strong> – The units for each hidden layer.</p></li>
+<li><p><strong>learining_r</strong> – The learning rate.</p></li>
+</ul>
 </dd>
-<dt>hidden_units:</dt><dd><p>The units for each hidden layer.</p>
-</dd>
-<dt>learining_r:</dt><dd><p>The learning rate.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>model: Keras Model</dt><dd><p>The deep neural network model we built</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>model</strong> (<em>Keras Model</em>) – The deep neural network model we built</p>
 </dd>
 </dl>
 </dd></dl>

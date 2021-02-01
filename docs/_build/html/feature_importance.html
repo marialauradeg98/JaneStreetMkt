@@ -46,14 +46,15 @@ than 1/n.</p>
 <code class="sig-prename descclassname">FeatureSelection.rf_feature_importance.</code><code class="sig-name descname">compute_feat_imp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">columns_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.rf_feature_importance.compute_feat_imp" title="Permalink to this definition">¶</a></dt>
 <dd><p>This functions finds the most important features of the dataset
 through the feature importance module of a random forest and deletes the redundant one.</p>
-<dl class="simple">
-<dt>model: classifier</dt><dd><p>the RF model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>classifier</em>) – the RF model</p></li>
+<li><p><strong>column_names</strong> (<em>list of strings</em>) – the names of the features</p></li>
+</ul>
 </dd>
-<dt>column_names: list of strings</dt><dd><p>the names of the features</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>deleted_feat: np.array of strings</dt><dd><p>the names of the redunant features</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>deleted_feat</strong> (<em>np.array of strings</em>) – the names of the redunant features</p>
 </dd>
 </dl>
 </dd></dl>

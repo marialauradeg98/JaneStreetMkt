@@ -48,30 +48,28 @@ corresponding to the choosen activity.</p>
 <dt id="JaneStreetMkt.data_visualization_main.boxplot_main">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">boxplot_main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.boxplot_main" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to build the boxplot of main features. The user
-can decide if save or not the figure obtained.
-Parameters
-———-
-data: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we are working on.</p>
-</div></blockquote>
+can decide if save or not the figure obtained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Pandas dataframe</em>) – The dataset we are working on.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="JaneStreetMkt.data_visualization_main.compute_profit">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">compute_profit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.compute_profit" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function compute the maximum possible profit in terms of the variables
-recommended in the competition evaluation page.
-Parameters
-———-
-d_frame: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset in which we want to find the maximum profit</p>
-</div></blockquote>
-<dl class="simple">
-<dt>days: int</dt><dd><p>Time range considered in terms of trading days</p>
+recommended in the competition evaluation page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d_frame</strong> (<em>Pandas dataframe</em>) – The dataset in which we want to find the maximum profit</p>
 </dd>
-<dt>val_u:</dt><dd><p>Value of the maximum possible utility</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>days</strong> (<em>int</em>) – Time range considered in terms of trading days</p></li>
+<li><p><em>val_u</em> – Value of the maximum possible utility</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -80,21 +78,19 @@ d_frame: Pandas dataframe</p>
 <dt id="JaneStreetMkt.data_visualization_main.corr_filter">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">corr_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">bound</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.corr_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function analyzes the correlation between the features and identifies
-the highly correlated features.
-Parameters
-———-
-d_frame: Pandas dataframe</p>
-<blockquote>
-<div><p>The dateset on which we evaluate the features correlation.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>bound: float</dt><dd><p>This bound identifies our correlation range.</p>
+the highly correlated features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d_frame</strong> (<em>Pandas dataframe</em>) – The dateset on which we evaluate the features correlation.</p></li>
+<li><p><strong>bound</strong> (<em>float</em>) – This bound identifies our correlation range.</p></li>
+</ul>
 </dd>
-</dl>
-<dl class="simple">
-<dt>data_flattened: Pandas series</dt><dd><p>The series which contains feature pairings with a correlation &gt;bound or &lt;-bound.</p>
-</dd>
-<dt>data_corr: Pandas DataFrame</dt><dd><p>Correlation matrix.</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>data_flattened</strong> (<em>Pandas series</em>) – The series which contains feature pairings with a correlation &gt;bound or &lt;-bound.</p></li>
+<li><p><strong>data_corr</strong> (<em>Pandas DataFrame</em>) – Correlation matrix.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -108,15 +104,13 @@ d_frame: Pandas dataframe</p>
 <dl class="py function">
 <dt id="JaneStreetMkt.data_visualization_main.daily_avarage">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">daily_avarage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.daily_avarage" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function computes the daily avarage values of each feature.
-Parameters
-———-
-d_frame: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset on which we compute our daily average quantities.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>day_mean: Pandas dataframe</dt><dd><p>The dataframe composed by the daily average values.</p>
+<dd><p>This function computes the daily avarage values of each feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d_frame</strong> (<em>Pandas dataframe</em>) – The dataset on which we compute our daily average quantities.</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>day_mean</strong> (<em>Pandas dataframe</em>) – The dataframe composed by the daily average values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -125,13 +119,12 @@ d_frame: Pandas dataframe</p>
 <dt id="JaneStreetMkt.data_visualization_main.hist_anon_features">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">hist_anon_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.hist_anon_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to plot histograms about anonymous features distributions.
-The user can decide if save or not the figures obtained.
-Parameters
-———-
-data: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we are working on.</p>
-</div></blockquote>
+The user can decide if save or not the figures obtained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Pandas dataframe</em>) – The dataset we are working on.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -139,13 +132,12 @@ data: Pandas dataframe</p>
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">hist_main_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.hist_main_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to plot histograms about main features distributions,
 particularly the categorical features: action and feature 0.
-The user can decide if save or not the figures obtained.
-Parameters
-———-
-data: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we are working on.</p>
-</div></blockquote>
+The user can decide if save or not the figures obtained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Pandas dataframe</em>) – The dataset we are working on.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -153,15 +145,13 @@ data: Pandas dataframe</p>
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">missing_data_analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">threshold</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.missing_data_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to identify features with a number of missing values
 over a threshold and build the relative bar plots.
-The user can decide if save or not the figure obtained.
-Parameters
-———-
-data: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we are working on.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>threshold: float</dt><dd><p>Threshold choosen for the selection of features with most missing values.</p>
+The user can decide if save or not the figure obtained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Pandas dataframe</em>) – The dataset we are working on.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – Threshold choosen for the selection of features with most missing values.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -170,13 +160,12 @@ data: Pandas dataframe</p>
 <dt id="JaneStreetMkt.data_visualization_main.plot_anon_features">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">plot_anon_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.plot_anon_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to plot the anonymous features over time (to see if
-there are some patterns). The user can decide if save or not the figures obtained.
-Parameters
-———-
-data: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we are working on.</p>
-</div></blockquote>
+there are some patterns). The user can decide if save or not the figures obtained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Pandas dataframe</em>) – The dataset we are working on.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -184,27 +173,24 @@ data: Pandas dataframe</p>
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">plot_main_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.plot_main_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to plot main features over time in terms of cumultaive
 sum of resp.
-The user can decide if save or not the figures obtained.
-Parameters
-———-
-data: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we are working on.</p>
-</div></blockquote>
+The user can decide if save or not the figures obtained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Pandas dataframe</em>) – The dataset we are working on.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="JaneStreetMkt.data_visualization_main.save_data_options">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">save_data_options</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">name_save</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.save_data_options" title="Permalink to this definition">¶</a></dt>
-<dd><p>This fuction is used for the save options of a dataframe as .cvs.
-Parameters
-———-
-object: Pandas dataframe</p>
-<blockquote>
-<div><p>Dataframe we want to save or not.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>name_save: string</dt><dd><p>Figure’s name.</p>
+<dd><p>This fuction is used for the save options of a dataframe as .cvs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Pandas dataframe</em>) – Dataframe we want to save or not.</p></li>
+<li><p><strong>name_save</strong> (<em>string</em>) – Figure’s name.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -212,40 +198,36 @@ object: Pandas dataframe</p>
 <dl class="py function">
 <dt id="JaneStreetMkt.data_visualization_main.save_oneplot_options">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">save_oneplot_options</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name_save</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.save_oneplot_options" title="Permalink to this definition">¶</a></dt>
-<dd><p>This fuction is used for the save options and visualization of a single plot.
-Parameters
-———-
-name_save: string</p>
-<blockquote>
-<div><p>Figure’s name.</p>
-</div></blockquote>
+<dd><p>This fuction is used for the save options and visualization of a single plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name_save</strong> (<em>string</em>) – Figure’s name.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="JaneStreetMkt.data_visualization_main.save_plots_options">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">save_plots_options</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">names_save</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.save_plots_options" title="Permalink to this definition">¶</a></dt>
-<dd><p>This fuction is used for the save options and visualization of some plots.
-Parameters
-———-
-names_save: list</p>
-<blockquote>
-<div><p>List in which we stored figures’ names.</p>
-</div></blockquote>
+<dd><p>This fuction is used for the save options and visualization of some plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>names_save</strong> (<em>list</em>) – List in which we stored figures’ names.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="JaneStreetMkt.data_visualization_main.statistical_matrix">
 <code class="sig-prename descclassname">JaneStreetMkt.data_visualization_main.</code><code class="sig-name descname">statistical_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.data_visualization_main.statistical_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns a Pandas dataframe containing useful statistical informations
-about the dataset (mean, median, max , min etc…).
-Parameters
-———-
-d_frame: Pandas dataframe</p>
-<blockquote>
-<div><p>The dataset we want to describe.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>new_matrix: Pandas dataframe</dt><dd><p>The dataframe in which we save all the information about our dataset.</p>
+about the dataset (mean, median, max , min etc…).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d_frame</strong> (<em>Pandas dataframe</em>) – The dataset we want to describe.</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>new_matrix</strong> (<em>Pandas dataframe</em>) – The dataframe in which we save all the information about our dataset.</p>
 </dd>
 </dl>
 </dd></dl>

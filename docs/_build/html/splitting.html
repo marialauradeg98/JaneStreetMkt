@@ -43,32 +43,25 @@ validation set.</p>
 <dd><p>This function splits the dataset in test set and training set or in test set,
 training set and validation set.
 In each case we leave a gap between training set and test set to prevent
-information leakage.
-Parameters
-———-
-data: DataFrame</p>
-<blockquote>
-<div><p>The dataset we want to split</p>
-</div></blockquote>
-<dl class="simple">
-<dt>no_fill: bool, default=False</dt><dd><p>If False replace missing data with outliers, if True not.</p>
+information leakage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>DataFrame</em>) – The dataset we want to split</p></li>
+<li><p><strong>no_fill</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If False replace missing data with outliers, if True not.</p></li>
+<li><p><strong>val</strong> (<em>bool</em><em>, </em><em>default= False</em>) – If False we divide the dataset in test set and training set, if True
+we also built a validation set.</p></li>
+</ul>
 </dd>
-<dt>val: bool, default= False</dt><dd><p>If False we divide the dataset in test set and training set, if True
-we also built a validation set.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>X_train: DataFrame</dt><dd><p>Training set without class label</p>
-</dd>
-<dt>y_train: np.array</dt><dd><p>Class label for training set</p>
-</dd>
-<dt>X_test: DataFrame</dt><dd><p>Test set without class label</p>
-</dd>
-<dt>y_test: np.array</dt><dd><p>Class label for test set</p>
-</dd>
-<dt>X_val: DataFrame</dt><dd><p>Validation set without class label</p>
-</dd>
-<dt>y_test: np.array</dt><dd><p>Class label for validation set</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>X_train</strong> (<em>DataFrame</em>) – Training set without class label</p></li>
+<li><p><strong>y_train</strong> (<em>np.array</em>) – Class label for training set</p></li>
+<li><p><strong>X_test</strong> (<em>DataFrame</em>) – Test set without class label</p></li>
+<li><p><strong>y_test</strong> (<em>np.array</em>) – Class label for test set</p></li>
+<li><p><strong>X_val</strong> (<em>DataFrame</em>) – Validation set without class label</p></li>
+<li><p><strong>y_test</strong> (<em>np.array</em>) – Class label for validation set</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

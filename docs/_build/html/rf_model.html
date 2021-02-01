@@ -32,8 +32,66 @@
             
   <div class="section" id="api-documentation">
 <h1>API documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="random-forest-model">
-<h2>Random Forest model<a class="headerlink" href="#random-forest-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-FeatureSelection.rf_model">
+<span id="random-forest-model"></span><h2>Random Forest model<a class="headerlink" href="#module-FeatureSelection.rf_model" title="Permalink to this headline">¶</a></h2>
+<p>In the first part of this module we implement a bayesian optimizer to find the
+best hyperparameters for an RF algorithm.
+After that we fit 2 models with the 2 best hyperparameters using a 5 fold
+TimeSeriesSplit cross validation and we compute the accuracy on training and test set.
+TimeSeriesSplit is used for 2 reasons:
+1) We want to make sure that the models doesn’t look into future data
+2) We introduce a gap between test and train in each fold  to prevent information leakage</p>
+<dl class="py function">
+<dt id="FeatureSelection.rf_model.acc_model">
+<code class="sig-prename descclassname">FeatureSelection.rf_model.</code><code class="sig-name descname">acc_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.rf_model.acc_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function computes the AUC score of the model on the validation set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs) – paramters for the RF model</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>accuracy</strong> (<em>float</em>) – AUC score</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="FeatureSelection.rf_model.func">
+<code class="sig-prename descclassname">FeatureSelection.rf_model.</code><code class="sig-name descname">func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.rf_model.func" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the functon we want to minimize during the tuning process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs) – paramters for the RF model</p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>loss</strong> (<em>float</em>) – the parameter we want to minimize (-AUC score)</p></li>
+<li><p><em>status</em> – this parameter reports if an error occured while the model is fitting</p></li>
+<li><p><em>train_time</em> – time fit the model and compute the AUC score</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="FeatureSelection.rf_model.time_cv">
+<code class="sig-prename descclassname">FeatureSelection.rf_model.</code><code class="sig-name descname">time_cv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clf</span></em>, <em class="sig-param"><span class="n">n_folds</span></em>, <em class="sig-param"><span class="n">t_size</span><span class="o">=</span><span class="default_value">200000</span></em>, <em class="sig-param"><span class="n">gap_size</span><span class="o">=</span><span class="default_value">200000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#FeatureSelection.rf_model.time_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function train a model with TimeSeriesSplit cross validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clf</strong> (<em>classifier</em>) – The classifier we want to fit.</p></li>
+<li><p><strong>n_folds</strong> (<em>int</em>) – number of CV splits</p></li>
+<li><p><strong>t_size</strong> (<em>int</em><em> (</em><em>default 2e5</em><em>)</em>) – Maximum test size for each CV split</p></li>
+<li><p><strong>gap_size</strong> (<em>int</em><em> (</em><em>default 2e5</em><em>)</em>) – Gap between training and test for each split</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>score_cv</strong> (<em>list of float</em>) – AUC score at each iteration</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 

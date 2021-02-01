@@ -48,20 +48,18 @@ thus reducing by far the time required to find the best learning rate.</p>
 <dt id="JaneStreetMkt.find_learn_rate.build">
 <code class="sig-prename descclassname">JaneStreetMkt.find_learn_rate.</code><code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_dim</span></em>, <em class="sig-param"><span class="n">hidden_units</span></em>, <em class="sig-param"><span class="n">num_labels</span></em>, <em class="sig-param"><span class="n">dropout_rates</span></em>, <em class="sig-param"><span class="n">learning_rate</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.find_learn_rate.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function builts the deep neural network used for the training.</p>
-<dl class="simple">
-<dt>input_dim: int</dt><dd><p>number of rows of competiton data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dim</strong> (<em>int</em>) – number of rows of competiton data</p></li>
+<li><p><strong>hidden_units</strong> (<em>list of 4 int</em>) – number of hidden units for each layer</p></li>
+<li><p><strong>num_labels</strong> – num labels?</p></li>
+<li><p><strong>dropout_rates</strong> (<em>list of 4 int</em>) – dropout rates</p></li>
+<li><p><strong>learning_rate</strong> (<em>float</em>) – learning rate for gradient discent</p></li>
+</ul>
 </dd>
-<dt>hidden_units: list of 4 int</dt><dd><p>number of hidden units for each layer</p>
-</dd>
-<dt>num_labels:</dt><dd><p>num labels?</p>
-</dd>
-<dt>dropout_rates: list of 4 int</dt><dd><p>dropout rates</p>
-</dd>
-<dt>learning_rate: float</dt><dd><p>learning rate for gradient discent</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>model:</dt><dd><p>the neural network model</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><em>model</em> – the neural network model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -70,14 +68,15 @@ thus reducing by far the time required to find the best learning rate.</p>
 <dt id="JaneStreetMkt.find_learn_rate.filter_loss">
 <code class="sig-prename descclassname">JaneStreetMkt.find_learn_rate.</code><code class="sig-name descname">filter_loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">loss</span></em>, <em class="sig-param"><span class="n">beta</span></em><span class="sig-paren">)</span><a class="headerlink" href="#JaneStreetMkt.find_learn_rate.filter_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>this function computes the smoothed loss</p>
-<dl class="simple">
-<dt>loss: np.array of float</dt><dd><p>validation loss we want to smooth</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss</strong> (<em>np.array of float</em>) – validation loss we want to smooth</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – this paramer set how much strong the smoothing process is</p></li>
+</ul>
 </dd>
-<dt>beta: float</dt><dd><p>this paramer set how much strong the smoothing process is</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>smoothed_loss: np.array of float</dt><dd><p>smoothed loss</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>smoothed_loss</strong> (<em>np.array of float</em>) – smoothed loss</p>
 </dd>
 </dl>
 </dd></dl>
