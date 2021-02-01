@@ -223,9 +223,6 @@ def main():
     This function implements a interactive way to import the import the dataset.
     It reads the keabord inputs of the user to decide wich function to use to
     import the dataset.
-    Parameters
-    ----------
-    None
 
     Yields
     ------

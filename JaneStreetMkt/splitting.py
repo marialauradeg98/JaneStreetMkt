@@ -10,6 +10,7 @@ def split_data(data, no_fill=False, val=False):
     training set and validation set.
     In each case we leave a gap between training set and test set to prevent
     information leakage.
+
     Parameters
     ----------
     data: DataFrame

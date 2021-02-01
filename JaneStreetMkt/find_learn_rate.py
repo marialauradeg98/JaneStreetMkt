@@ -73,8 +73,8 @@ def filter_loss(loss, beta):
     """
     this function computes the smoothed loss
 
-    Parameters:
-    ---------
+    Parameters
+    ----------
     loss: np.array of float
         validation loss we want to smooth
 

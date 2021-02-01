@@ -21,6 +21,7 @@ def build_model(hp):
     """
     This function in used for build the neural network model, specifing the
     hyperparameters we want to optimize and their searching rate.
+
     Parameters
     ----------
     hp: Keras Tuner hyperparameter
