@@ -5,9 +5,9 @@ After that we fit 2 models with the 2 best hyperparameters using a 5 fold
 TimeSeriesSplit cross validation and we compute the accuracy on training and test set.
 TimeSeriesSplit is used for 2 reasons:
 1) We want to make sure that the models doesn't look into future data
-2) We introduce a gap between test and train in each fold  to prevent
-   information leakage
+2) We introduce a gap between test and train in each fold  to prevent information leakage
 """
+
 import time
 import pickle
 import gc
@@ -80,7 +80,7 @@ def time_cv(clf, n_folds, t_size=int(2e5), gap_size=int(2e5)):
 
 def acc_model(params):
     """
-    This function computes the AUC score of the model on the validation set
+    This function computes the AUC score of the model on the validation set.
 
     Parameters
     ----------
@@ -103,7 +103,7 @@ def acc_model(params):
 
 def func(params):
     """
-    This is the functon we want to minimize during the tuning process
+    This is the functon we want to minimize during the tuning process.
 
     Parameters
     ----------

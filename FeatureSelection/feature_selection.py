@@ -17,8 +17,9 @@ def remove_features(data, list_duplicates):
     """
     This function removes rows from the higly correlated DataFrame
     containing the names in list duplicates.
+
     Parameters
-    ----------
+    -----------
     data: DataFrame
         original dataframe from which we want to remove features.
     list_duplicates: list of str
@@ -53,8 +54,9 @@ def remove_duplicates(data, treshold):
     """
     This function finds features highly correlated with multiple features.
     They will be the first features we are going to remove.
+
     Parameters
-    ----------
+    -----------
     data: DataFrame
         original dataframe from wich we want to remove features.
     treshold: float
@@ -107,8 +109,9 @@ def remove_redundat_feat(data, series, treshold):
     """
     This function select from each correlation pairing the one with less class correlation
     in order to remove it.
+
     Parameters
-    ----------
+    -----------
     data: DataFrame
         original dataframe from wich we want to remove features.
     series: Series
@@ -155,8 +158,9 @@ def compute_correlation(filepath=None):
     """
     This function computes and saves the correlation matrix of the test set
     and the matrix with feature pairings with correlation greater than 0.9.
+
     Parameters
-    ----------
+    -----------
     filepath: str (default=None)
         filepath where the two matrices wll be saved
     Yields
@@ -191,8 +195,9 @@ def main(treshold):
     """
     This is the main of the module.
     It combines all the previously defined functions to do a feature selections.
+
     Parameters
-    ----------
+    -----------
     treshold: float
         the correlation treshold we use to consider feature pairings.
     Yields
