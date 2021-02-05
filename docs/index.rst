@@ -7,12 +7,6 @@ Welcome to Jane Street Market's documentation!
 ==============================================
 This is our project about the Kaggle competition: https://www.kaggle.com/c/jane-street-market-prediction. 
 
-.. toctree::
-   :maxdepth: 2
-   
-   
-
-
 Indices and tables
 ==================
 
