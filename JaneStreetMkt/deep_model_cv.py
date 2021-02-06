@@ -5,6 +5,7 @@ by the optimization with Keras Tuner and the learning rate we compute in the
 module find_learn_rate. We compute a 5 fold cross validation and we save the
 best model obtained for each fold in a specific file which we save on our directory.
 """
+
 import time
 import gc
 import pandas as pd
@@ -25,17 +26,20 @@ def build (input_dim,num_layers,hidden_units,learning_r):
     we found with an optimization process.
     Parameters
     ----------
+    
     input_dim: int
         The tensor shape we send to the first hidden layer and must be
         the same shape as the used training set.
     num_layers: int
         The number of hidden layers.
-    hidden_units:
+    hidden_units: list of int
         The units for each hidden layer.
-    learining_r:
+    learining_r: float
         The learning rate.
+        
     Yields
     ------
+    
     model: Keras Model
         The deep neural network model we built
     """
