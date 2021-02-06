@@ -10,82 +10,71 @@ The reason we use this tecnique rather than getting the learning rate through an
 hyperparameter search, is that  we need to fit the model over only one epoch
 thus reducing by far the time required to find the best learning rate.
 """
-
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-from keras.layers import Input, Dense, Dropout, Activation, BatchNormalization
-from keras.models import Model
-import keras.losses
-import feature_selection
-from initial_import import import_training_set
 from splitting import split_data
+from initial_import import import_training_set
+import feature_selection
+import keras.losses
+from keras.models import Model
+from keras.layers import Input, Dense, Activation, BatchNormalization
+from keras.optimizers import Adam
+import matplotlib.pyplot as plt
+import numpy as np
+import time
 
 
-def build(input_dim, hidden_units, num_labels, dropout_rates, learning_rate):
+def build(input_dim, num_layers, hidden_units, learning_r):
     """
-    This function builts the deep neural network used for the training.
-
+    This function builts the model for our deep neural network used the hyperparameter
+    we found with an optimization process.
     Parameters
     ----------
 
     input_dim: int
-        number of rows of competiton data
-
-    hidden_units: list of 4 int
-        number of hidden units for each layer
-
-    num_labels:
-        num labels?
-
-    dropout_rates: list of 4 int
-        dropout rates
-
-    learning_rate: float
-        learning rate for gradient discent
+        The tensor shape we send to the first hidden layer and must be
+        the same shape as the used training set.
+    num_layers: int
+        The number of hidden layers.
+    hidden_units: list of int
+        The units for each hidden layer.
+    learining_r: float
+        The learning rate.
 
     Yields
     ------
-    model:
-        the neural network model
+
+    model: Keras Model
+        The deep neural network model we built
     """
-
-    input_layer = Input(shape=(input_dim, ))
-    layer = BatchNormalization()(input_layer)  # re-centring and rescaling input layer
-    # a fraction of nodes is discarded with a frequency equal to the rate
-    layer = Dropout(dropout_rates[0])(layer)
-    for i, unit in enumerate(hidden_units):
-        layer = Dense(unit)(layer)
-        layer = BatchNormalization()(layer)
-        layer = Activation('relu')(layer)
-        layer = Dropout(dropout_rates[i+1])(layer)
-
-    output = Dense(num_labels, activation='sigmoid')(layer)
-    model = Model(inputs=input_layer, outputs=output)
-    model.compile(loss=keras.losses.binary_crossentropy,
-                  optimizer=keras.optimizers.Adam(learning_rate), metrics=['accuracy'])
-    model.summary()
-
+    # input layer
+    input = Input(shape=(input_dim, ))
+    # re-centring and rescaling input layer
+    x = BatchNormalization()(input)
+    # iterations on the number of layers
+    for i in range(num_layers):
+        # dense layers
+        x = Dense(hidden_units[i], activation='relu')(x)
+    # final dense layer with its activation function
+    output = Dense(1, activation='sigmoid')(x)
+    model = Model(inputs=input, outputs=output)
+    # compile our model choosing the type of loss, optimizer and metrics we want to use
+    model.compile(loss='binary_crossentropy',
+                  optimizer=Adam(learning_rate=learning_r), metrics=['AUC'])
     return model
 
 
 def filter_loss(loss, beta):
     """
     this function computes the smoothed loss
-
     Parameters
     ----------
     loss: np.array of float
         validation loss we want to smooth
-
     beta: float
         this paramer set how much strong the smoothing process is
-
     Yields
     ------
     smoothed_loss: np.array of float
         smoothed loss
-
     """
     num = len(loss)
     # create two empty arrays
@@ -149,12 +138,10 @@ if __name__ == '__main__':
 
             # set hyperparameters
             hidden = [128, 256, 256, 128]
-            dropout = [0.10143786981358652, 0.19720339053599725,
-                       0.2703017847244654, 0.23148340929571917, 0.2357768967777311]
 
             # build model
             print('Building model...')
-            nn_brain = build(dimension, hidden, 1, dropout, LEARN_RATE)
+            nn_brain = build(dimension, 4, hidden, LEARN_RATE)
             print('Training model...')
 
             # fit the model
