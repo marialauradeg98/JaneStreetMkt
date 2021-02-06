@@ -1,0 +1,10 @@
+sphinx==1.8.5
+numpy==1.19.5
+Keras==2.4.3
+Keras-Preprocessing==1.1.2
+keras-tuner==1.0.2
+pandas==1.1.5
+matplotlib==3.3.3
+datatable==0.11.1
+hyperopt==0.2.5
+tensorflow==2.4.0
