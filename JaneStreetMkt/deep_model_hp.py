@@ -87,6 +87,13 @@ if __name__ == '__main__':
                  es, reduce_lr], batch_size=4096, validation_data=(X_val, y_val))
     # print a summary of out tuning actions
     tuner.results_summary()
+    #evaluate best model on test set
+    best_model = tuner.get_best_models(num_models=1)[0]
+    loss_t, accuracy_t = best_model.evaluate(X_test, y_test)
+    print('The loss on the test set is:\n')
+    print(loss_t)
+    print('The accuracy on the test set is:\n')
+    print(accuracy_t)
     #print the best parameters obtained by the Random Search
     best_hp = tuner.get_best_hyperparameters()[0].values
     print('The best hyperparameters are:\n')
