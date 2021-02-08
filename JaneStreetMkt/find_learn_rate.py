@@ -1,6 +1,6 @@
 """
 In this module we implement a tecnique to find the best learning rate
-based on the article:
+based on the article: https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
 In the first part of the model we build 100 models with a linearly encreasing
 learning rate over a period of only one epoch.
 Then, after applying a smoothing algorithm, we find the learning rate lr which
