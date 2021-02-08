@@ -15,6 +15,7 @@ from keras.layers import Input,Dense,BatchNormalization
 from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
 from keras.optimizers import Adam
+from sklearn.metrics import roc_auc_score
 from initial_import import import_training_set
 from splitting import split_data
 import feature_selection
@@ -124,18 +125,20 @@ if __name__ == '__main__':
         gc.collect()
 
     #print results for the cross validation
-    print('AUC score for each fold is:\n',results_cv)
+    print('AUC for each fold is:\n',results_cv)
     #evaluate the model on test set
     print('Evaluating model...')
-    results_test = nn_model.evaluate(X_test, y_test, batch_size=4096)
+    pred_test = nn_model.predict(X_test)
+    score_test = roc_auc_score(y_test, pred_test)
     #evaluate the model on training set
-    results_train = nn_model.evaluate(X, y, batch_size=4096)
+    pred_train = nn_model.predict(X_train)
+    score_train = roc_auc_score(y_train, pred_train)    
     # compute execution time
     mins = (time.time()-start)//60
     sec = (time.time()-start) % 60
     finish = (time.time()-start)/60
     # create a datafram that sumarizes the results
-    results = {"score test ": results_test[1], "score training": results_train[1],
+    results = {"score test ": score_test, "score training": score_train,
                "computational time (min)": finish}
     end_results = pd.DataFrame(results, index=["values"])
     #print final results
