@@ -1,7 +1,7 @@
 """
 In this module we implement a tecnique to find the best learning rate
 based on the article: https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
-In the first part of the model we build 100 models with a linearly encreasing
+In the first part of the model we build 40 models with a linearly encreasing
 learning rate over a period of only one epoch.
 Then, after applying a smoothing algorithm, we find the learning rate lr which
 minimizes the loss.
@@ -65,12 +65,14 @@ def build(input_dim, num_layers, hidden_units, learning_r):
 def filter_loss(loss, beta):
     """
     this function computes the smoothed loss
+    
     Parameters
     ----------
     loss: np.array of float
         validation loss we want to smooth
     beta: float
         this paramer set how much strong the smoothing process is
+        
     Yields
     ------
     smoothed_loss: np.array of float
