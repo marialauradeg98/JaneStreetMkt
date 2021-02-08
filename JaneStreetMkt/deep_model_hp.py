@@ -89,11 +89,11 @@ if __name__ == '__main__':
     tuner.results_summary()
     #evaluate best model on test set
     best_model = tuner.get_best_models(num_models=1)[0]
-    loss_t, accuracy_t = best_model.evaluate(X_test, y_test)
+    loss_t, auc_t = best_model.evaluate(X_test, y_test)
     print('The loss on the test set is:\n')
     print(loss_t)
-    print('The accuracy on the test set is:\n')
-    print(accuracy_t)
+    print('The AUC on the test set is:\n')
+    print(auc_t)
     #print the best parameters obtained by the Random Search
     best_hp = tuner.get_best_hyperparameters()[0].values
     print('The best hyperparameters are:\n')
