@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
-from rf_feature_importance import compute_feat_imp
+from JaneStreetMkt.f_feature_importance import compute_feat_imp
 from sklearn.ensemble import ExtraTreesClassifier
 
 
