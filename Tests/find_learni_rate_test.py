@@ -1,5 +1,5 @@
 import unittest
-import find_learn_rate
+import JaneStreetMkt.find_learn_rate as find_learn_rate
 
 
 class TestSmoothLoss(unittest.TestCase):
