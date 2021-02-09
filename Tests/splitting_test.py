@@ -1,5 +1,5 @@
 import unittest
-import splitting
+import JaneStreetMkt.splitting as splitting
 import numpy as np
 import pandas as pd
 
