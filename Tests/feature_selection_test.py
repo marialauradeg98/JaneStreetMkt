@@ -1,5 +1,5 @@
 import unittest
-import JaneStreetMkt.feature_selection
+import JaneStreetMkt.feature_selection as feature_selection
 import numpy as np
 import pandas as pd
 
