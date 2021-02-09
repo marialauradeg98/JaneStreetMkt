@@ -1,5 +1,5 @@
 import unittest
-import initial_import
+import JaneStreetMkt.initial_import as initial_import
 import numpy as np
 import numpy.testing as nt
 
