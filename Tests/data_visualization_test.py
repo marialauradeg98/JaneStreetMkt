@@ -1,5 +1,5 @@
 import unittest
-import data_visualization_main
+import JaneStreetMkt.data_visualization_main as data_visualization_main
 import numpy as np
 import pandas as pd
 
